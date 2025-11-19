@@ -1,0 +1,180 @@
+package hu.eszter.chess;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Bishop extends Piece {
+
+    public Bishop(String color, String side) {
+        super(color);
+        if (side.equals("queen") && color.equals("white")) {
+            this.startingPosition = new int[]{7, 2};
+        }
+        if (side.equals("king") && color.equals("white")) {
+            this.startingPosition = new int[]{7, 5};
+        }
+        if (side.equals("queen") && color.equals("black")) {
+            this.startingPosition = new int[]{0, 2};
+        }
+        if (side.equals("king") && color.equals("black")) {
+            this.startingPosition = new int[]{0, 5};
+        }
+        this.currentPosition = startingPosition;
+    }
+
+    @Override
+    public List<int[]> getLegalMoves(Piece[][] board, int[] position) {
+        List<int[]> moves = new ArrayList<>();
+
+        int x = position[0];
+        int y = position[1];
+
+        // Up-left
+        int currentX = x-1;
+        int currentY = y-1;
+        while (currentX >= 0 && currentY >= 0 && board[currentX][currentY] == null) {
+            moves.add(new int[]{currentX, currentY});
+            currentX--;
+            currentY--;
+        }
+
+        // Down-right
+        currentX = x + 1;
+        currentY = y + 1;
+        while (currentX < board.length && currentY < board[0].length && board[currentX][currentY] == null) {
+            moves.add(new int[]{currentX, currentY});
+            currentX++;
+            currentY++;
+        }
+
+        // Up-right
+        currentX = x - 1;
+        currentY = y + 1;
+        while (currentX >= 0 && currentY < board[0].length && board[currentX][currentY] == null) {
+            moves.add(new int[]{currentX, currentY});
+            currentX--;
+            currentY++;
+        }
+
+        // Down-left
+        currentX = x + 1;
+        currentY = y - 1;
+        while (currentX < board.length && currentY >= 0 && board[currentX][currentY] == null) {
+            moves.add(new int[]{currentX, currentY});
+            currentX++;
+            currentY--;
+        }
+
+        return moves;
+    }
+
+    @Override
+    public List<int[]> getLegalMovesSimple(int[][] board, int[] position) {
+        List<int[]> moves = new ArrayList<>();
+
+        int x = position[0];
+        int y = position[1];
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (Math.abs(x - i) == Math.abs(y - j) && !(x == i && y == j)) {
+                    moves.add(new int[]{i,j});
+                }
+            }
+        }
+        return moves;
+    }
+
+    @Override
+    public List<int[]> getLegalCaptures(Piece[][] board, int[] position) {
+        List<int[]> moves = new ArrayList<>();
+
+        int x = position[0];
+        int y = position[1];
+
+        // Up-left
+        int currentX = x-1;
+        int currentY = y-1;
+        while (currentX >= 0 && currentY >= 0) {
+            Piece p = board[currentX][currentY];
+            if (p == null) {
+                currentX--;
+                currentY--;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new int[]{currentX, currentY});
+            }
+            break;
+        }
+
+        // Down-right
+        currentX = x + 1;
+        currentY = y + 1;
+        while (currentX < board.length && currentY < board[0].length) {
+            Piece p = board[currentX][currentY];
+            if (p == null) {
+                currentX++;
+                currentY++;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new int[]{currentX, currentY});
+            }
+            break;
+        }
+
+        // Up-right
+        currentX = x - 1;
+        currentY = y + 1;
+        while (currentX >= 0 && currentY < board[0].length) {
+            Piece p = board[currentX][currentY];
+            if (p == null) {
+                currentX--;
+                currentY++;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new int[]{currentX, currentY});
+            }
+            break;
+        }
+
+        // Down-left
+        currentX = x + 1;
+        currentY = y - 1;
+        while (currentX < board.length && currentY >= 0) {
+            Piece p = board[currentX][currentY];
+            if (p == null) {
+                currentX++;
+                currentY--;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new int[]{currentX, currentY});
+            }
+            break;
+        }
+
+        return moves;
+    }
+
+    @Override
+    public String toString() {
+        return this.color.equals("white") ? "WhiteBishop" : "BlackBishop";
+    }
+
+    public int[] getStartingPosition() {
+        return new int[]{this.startingPosition[0], this.startingPosition[1]};
+    }
+
+    @Override
+    public int[] getCurrentPosition() {
+        return new int[]{this.currentPosition[0], this.currentPosition[1]};
+    }
+
+    @Override
+    public void setCurrentPosition(int[] position) {
+        this.currentPosition = position;
+    }
+}

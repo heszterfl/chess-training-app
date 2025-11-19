@@ -1,6 +1,5 @@
 package hu.eszter.chess;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -22,8 +21,7 @@ public class Main {
             default -> -1;
         };
         int x = Integer.parseInt(subX);
-        int[] result = new int[]{8 - x, y};
-        return result;
+        return new int[]{8 - x, y};
     }
 
     public static String convertSquareToString(int[] position) {
@@ -44,7 +42,7 @@ public class Main {
         return posY + posX;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         Board board = new Board();
         for (int i = 0; i < board.getBoard().length; i++) {
@@ -55,44 +53,38 @@ public class Main {
         }
 
 // READING IN USER INPUT
-        boolean gameOn = true;
-
-        while (gameOn) {
+        while (true) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("What's your move with white? (i.e. e2-e4 / e2xf3 / Ng1-f3 / Ng1xf3) ");
             String input = scanner.nextLine();
             if (input.equals("q")) {
-                gameOn = false;
                 break;
             }
             System.out.println("User input: " + input);
 
-            String[] splitted = input.split("-|x");
-            System.out.println(Arrays.toString(splitted));
-            String start = splitted[0];
-            String end = splitted[1];
+            String[] split = input.split("[-x]");
+            System.out.println(Arrays.toString(split));
+            String start = split[0];
+            String end = split[1];
 
             if (start.matches("[a-z][1-8]")) {
-                if (!input.contains("x")) {  // simple move
-                    splitted = input.split("-");
-                    start = splitted[0];
-                    end = splitted[1];
+                if (!input.contains("x")) {
+                    split = input.split("-");
                 } else {
-                    splitted = input.split("x");
-                    start = splitted[0];
-                    end = splitted[1];
+                    split = input.split("x");
                 }
+                start = split[0];
+                end = split[1];
             } else if (start.matches("[A-Z].+")) {
                 if (!input.contains("x")) {
-                    splitted = input.split("-");
-                    start = splitted[0];
+                    split = input.split("-");
+                    start = split[0];
                     start = start.substring(1);
-                    end = splitted[1];
                 } else {
-                    splitted = input.split("x");
-                    start = splitted[0].substring(1);
-                    end = splitted[1];
+                    split = input.split("x");
+                    start = split[0].substring(1);
                 }
+                end = split[1];
             }
 
             board.setPieceAt(convertSquareToArray(start), convertSquareToArray(end));

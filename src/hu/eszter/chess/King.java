@@ -87,18 +87,4 @@ public class King extends Piece {
         return this.color.equals("white") ? "WhiteKing" : "BlackKing";
     }
 
-    @Override
-    public int[] getStartingPosition() {
-        return new int[]{this.startingPosition[0], this.startingPosition[1]};
-    }
-
-    @Override
-    public int[] getCurrentPosition() {
-        return new int[]{this.currentPosition[0], this.currentPosition[1]};
-    }
-
-    @Override
-    public void setCurrentPosition(int[] position) {
-        this.currentPosition = position;
-    }
 }

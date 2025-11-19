@@ -96,10 +96,9 @@ public class Board {
             List<int[]> possibleMoves = piece.getLegalMoves(board, piece.getCurrentPosition());
 
             System.out.println("Current board: ");
-            for (int i = 0; i < board.length; i++) {
+            for (Piece[] pieces : board) {
                 for (int j = 0; j < board[0].length; j++) {
-                    System.out.print(board[i][j] + " ");
-                    Piece p = board[i][j];
+                    System.out.print(pieces[j] + " ");
                 }
                 System.out.println();
             }
@@ -116,10 +115,9 @@ public class Board {
             List<int[]> possibleCaptures = piece.getLegalCaptures(board, piece.getCurrentPosition());
             System.out.println(piece);
             System.out.println("Current board: ");
-            for (int i = 0; i < board.length; i++) {
+            for (Piece[] pieces : board) {
                 for (int j = 0; j < board[0].length; j++) {
-                    System.out.print(board[i][j] + " ");
-                    Piece p = board[i][j];
+                    System.out.print(pieces[j] + " ");
                 }
                 System.out.println();
             }

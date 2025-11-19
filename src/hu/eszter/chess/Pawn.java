@@ -42,12 +42,7 @@ public class Pawn extends Piece {
         // Check if black or white
         int x = position[0];
         int y = position[1];
-        boolean isFirstMove = true;
-
-        // ha világos és x < 6 vagy sötét és x > 1 --> !isFirstMove
-        if ((color.equals("white") && x < 6) || (color.equals("black") && x > 1)) {
-            isFirstMove = false;
-        }
+        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
 
         if (color.equals("white")) {
             if (isFirstMove) {
@@ -86,12 +81,7 @@ public class Pawn extends Piece {
         // Check if black or white
         int x = position[0];
         int y = position[1];
-        boolean isFirstMove = true;
-
-        // ha világos és x < 6 vagy sötét és x > 1 --> !isFirstMove
-        if ((color.equals("white") && x < 6) || (color.equals("black") && x > 1)) {
-            isFirstMove = false;
-        }
+        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
 
         if (color.equals("white")) {
             if (isFirstMove) {
@@ -113,7 +103,7 @@ public class Pawn extends Piece {
 
     @Override
     public String toString() {
-        return this.color == "white" ? "WhitePawn" : "BlackPawn";
+        return this.color.equals("white") ? "WhitePawn" : "BlackPawn";
     }
 
     @Override
@@ -142,18 +132,4 @@ public class Pawn extends Piece {
         return captures;
     }
 
-    @Override
-    public int[] getCurrentPosition() {
-        return new int[]{this.currentPosition[0], this.currentPosition[1]};
-    }
-
-    @Override
-    public int[] getStartingPosition() {
-        return new int[]{this.startingPosition[0], this.startingPosition[1]};
-    }
-
-    @Override
-    public void setCurrentPosition(int[] position) {
-        this.currentPosition = position;
-    }
 }

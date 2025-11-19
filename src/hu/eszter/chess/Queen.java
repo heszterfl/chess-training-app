@@ -20,7 +20,6 @@ public class Queen extends Piece {
 
         // Up
         int currentX = x - 1;
-        int currentY = y;
         while (currentX >= 0 && board[currentX][y] == null) {
             moves.add(new int[]{currentX,y});
             currentX--;
@@ -34,7 +33,7 @@ public class Queen extends Piece {
         }
 
         // Left
-        currentY = y - 1;
+        int currentY = y - 1;
         while (currentY >= 0 && board[x][currentY] == null) {
             moves.add(new int[]{x, currentY});
             currentY--;
@@ -243,17 +242,4 @@ public class Queen extends Piece {
         return this.color.equals("white") ? "WhiteQueen" : "BlackQueen";
     }
 
-    public int[] getStartingPosition() {
-        return new int[]{this.startingPosition[0], this.startingPosition[1]};
-    }
-
-    @Override
-    public int[] getCurrentPosition() {
-        return new int[]{this.currentPosition[0], this.currentPosition[1]};
-    }
-
-    @Override
-    public void setCurrentPosition(int[] position) {
-        this.currentPosition = position;
-    }
 }

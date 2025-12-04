@@ -7,7 +7,7 @@ import java.util.ListIterator;
 
 public class Board {
 
-    public Piece[][] board;
+    public static Piece[][] board;
     List<Piece> whiteArmy;
     List<Piece> blackArmy;
     List<Piece> removed = new ArrayList<>();
@@ -77,7 +77,7 @@ public class Board {
         return board;
     }
 
-    public Piece getPieceAt(int[] position) {
+    public Piece getPieceAt(Piece[][]board, int[] position) {
         if (board[position[0]][position[1]] == null) {
             return null;
         }
@@ -90,6 +90,7 @@ public class Board {
         int newX = newPos[0];
         int newY = newPos[1];
         Piece piece = getPieceAt(currentPosition);
+        Piece piece = getPieceAt(board, currentPosition);
 
         ListIterator<int[]> it;
         if (board[newX][newY] == null) {
@@ -106,8 +107,13 @@ public class Board {
             it = possibleMoves.listIterator();
             while (it.hasNext()) {
                 if (Arrays.equals(it.next(), newPos)) {
-                    piece.setCurrentPosition(newPos);
-                    board[newX][newY] = piece;
+                    if ((piece instanceof Pawn && (piece.color.equals("white") && newPos[0] == 0) || (piece.color.equals("black") && newPos[0] == 7))) {
+                        Piece newPiece = getPiece(newPos, piece);
+                        board[newX][newY] = newPiece;
+                    } else {
+                        piece.setCurrentPosition(newPos);
+                        board[newX][newY] = piece;
+                    }
                     board[currentX][currentY] = null;
                 }
             }
@@ -125,14 +131,33 @@ public class Board {
             it = possibleCaptures.listIterator();
             while (it.hasNext()) {
                 if (Arrays.equals(it.next(), newPos)) {
-                    Piece toRemove = getPieceAt(newPos);
+                    Piece toRemove = getPieceAt(this.getBoard(), newPos);
                     removed.add(toRemove);
-                    piece.setCurrentPosition(newPos);
-                    board[newX][newY] = piece;
+                    if (piece instanceof Pawn && (piece.color.equals("white") && newPos[0] == 0) || (piece.color.equals("black") && newPos[0] == 7)) {
+                        Piece newPiece = getPiece(newPos, piece);
+                        board[newX][newY] = newPiece;
+                    } else {
+                        piece.setCurrentPosition(newPos);
+                        board[newX][newY] = piece;
+                    }
                     board[currentX][currentY] = null;
                 }
             }
         }
+    }
+
+    private static Piece getPiece(int[] newPos, Piece piece) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("getPiece(): ");
+        String input = scanner.next();
+        Piece newPiece = switch (input) {
+            case "bishop" -> new Bishop(piece.color);
+            case "knight" -> new Knight(piece.color);
+            case "rook" -> new Rook(piece.color);
+            default -> new Queen(piece.color);
+        };
+        newPiece.setCurrentPosition(newPos);
+        return newPiece;
     }
 
     public void initializeBoard() {

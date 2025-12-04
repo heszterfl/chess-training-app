@@ -20,17 +20,13 @@ public class King extends Piece {
 
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-                if ( i == 0 && j == 0) continue;
+                if (i == 0 && j == 0) continue;
                 int newRow = x + i;
                 int newCol = y + j;
 
                 // Check if within board bounds
                 if (newRow >= 0 && newRow < board.length &&
                         newCol >= 0 && newCol < board[0].length && board[newRow][newCol] == null) {
-                    moves.add(new int[]{newRow, newCol});
-                }
-            }
-        }
                     int[] newSquare = new int[]{newRow, newCol};
                     if (!isProtected(board, newSquare)) {
                         moves.add(new int[]{newRow, newCol});
@@ -81,11 +77,6 @@ public class King extends Piece {
                 // Check if within board bounds
                 if (newRow >= 0 && newRow < board.length &&
                         newCol >= 0 && newCol < board[0].length && board[newRow][newCol] != null &&
-                        !(board[newRow][newCol].color).equals(this.color)) {        // *****
-                    moves.add(new int[]{newRow, newCol});
-                }
-            }
-        }
                         !(board[newRow][newCol].color).equals(this.color)) {
                     int[] newSquare = new int[]{newRow, newCol};
                     if (!isProtected(board, newSquare)) {
@@ -113,7 +104,6 @@ public class King extends Piece {
             Piece p = board[currentX][y];
             if (p == null) {
                 currentX--;
-                continue;
             } else if (currentX == x - 1 && !((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 System.out.println("isProtected() --> true");
                 return true;
@@ -131,7 +121,6 @@ public class King extends Piece {
             Piece p = board[currentX][y];
             if (p == null) {
                 currentX++;
-                continue;
             } else if (currentX == x + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 System.out.println("isProtected() --> true");
                 return true;
@@ -149,7 +138,6 @@ public class King extends Piece {
             Piece p = board[x][currentY];
             if (p == null) {
                 currentY--;
-                continue;
             } else if (currentY == y + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 System.out.println("isProtected() --> true");
                 return true;
@@ -167,7 +155,6 @@ public class King extends Piece {
             Piece p = board[x][currentY];
             if (p == null) {
                 currentY++;
-                continue;
             } else if (currentY == y + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 System.out.println("isProtected() --> true");
                 return true;

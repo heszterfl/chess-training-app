@@ -42,7 +42,8 @@ public class Pawn extends Piece {
         // Check if black or white
         int x = position[0];
         int y = position[1];
-        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
+//        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
+        boolean isFirstMove = (color.equals("white") && x == 6) || (color.equals("black") && x == 1);
 
         if (color.equals("white")) {
             if (isFirstMove) {
@@ -81,7 +82,8 @@ public class Pawn extends Piece {
         // Check if black or white
         int x = position[0];
         int y = position[1];
-        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
+//        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
+        boolean isFirstMove = (color.equals("white") && x == 6) || (color.equals("black") && x == 1);
 
         if (color.equals("white")) {
             if (isFirstMove) {
@@ -114,17 +116,17 @@ public class Pawn extends Piece {
         int y = position[1];
 
         if (color.equals("white")) {
-            if (board[x-1][y-1] != null && !(board[x-1][y-1].color).equals(this.color)) {
+            if (y-1 >= 0 && board[x-1][y-1] != null && !(board[x-1][y-1].color).equals(this.color)) {
                 captures.add(new int[]{x-1,y-1});
             }
-            if (board[x-1][y+1] != null && !(board[x-1][y+1].color).equals(this.color)) {
+            if (y+1 < board[0].length && board[x-1][y+1] != null && !(board[x-1][y+1].color).equals(this.color)) {
                 captures.add(new int[]{x-1,y+1});
             }
         } else {
-            if (board[x+1][y-1] != null && !(board[x+1][y-1].color).equals(this.color)) {
+            if (y-1 >= 0 && board[x+1][y-1] != null && !(board[x+1][y-1].color).equals(this.color)) {
                 captures.add(new int[]{x+1,y-1});
             }
-            if (board[x+1][y+1] != null && !(board[x+1][y+1].color).equals(this.color)) {
+            if (y+1 < board[0].length && board[x+1][y+1] != null && !(board[x+1][y+1].color).equals(this.color)) {
                 captures.add(new int[]{x+1,y+1});
             }
         }

@@ -1,7 +1,6 @@
 package hu.eszter.chess;
 
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -48,6 +47,22 @@ public class Main {
         for (int i = 0; i < board.getBoard().length; i++) {
             for (int j = 0; j < board.getBoard()[0].length; j++) {
                 System.out.print(board.getBoard()[i][j] + " ");
+        boolean whiteToMove = true;
+
+        HashMap<int[], String> whiteArmy = new HashMap<>();
+        HashMap<int[], String> blackArmy = new HashMap<>();
+        whiteArmy.put(convertSquareToArray("e5"), "king");
+        whiteArmy.put(convertSquareToArray("d4"), "pawn");
+        blackArmy.put(convertSquareToArray("e8"), "king");
+        blackArmy.put(convertSquareToArray("d6"), "knight");
+        blackArmy.put(convertSquareToArray("f5"), "bishop");
+        blackArmy.put(convertSquareToArray("f4"), "rook");
+        blackArmy.put(convertSquareToArray("a1"), "rook");
+        blackArmy.put(convertSquareToArray("c4"), "queen");
+        Board customBoard = new Board(whiteArmy, blackArmy);
+        for (int i = 0; i < customBoard.getBoard().length; i++) {
+            for (int j = 0; j < customBoard.getBoard()[0].length; j++) {
+                System.out.print(customBoard.getBoard()[i][j] + " ");
             }
             System.out.println();
         }
@@ -55,7 +70,7 @@ public class Main {
 // READING IN USER INPUT
         while (true) {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("What's your move with white? (i.e. e2-e4 / e2xf3 / Ng1-f3 / Ng1xf3) ");
+            System.out.println("What's your move with " + (whiteToMove ? "white" : "black") + "? (i.e. e2-e4 / e2xf3 / Ng1-f3 / Ng1xf3) ");
             String input = scanner.nextLine();
             if (input.equals("q")) {
                 break;
@@ -88,6 +103,27 @@ public class Main {
             }
 
             board.setPieceAt(convertSquareToArray(start), convertSquareToArray(end));
+            if (whiteToMove && customBoard.getPieceAt(customBoard.getBoard(), convertSquareToArray(start)).color.equals("black")) {
+                System.out.println("Enter a move for White: ");
+                continue;
+            } else {
+                customBoard.setPieceAt(convertSquareToArray(start), convertSquareToArray(end));
+            }
+
+            if (!whiteToMove && customBoard.getPieceAt(customBoard.getBoard(), convertSquareToArray(start)).color.equals("white")) {
+                System.out.println("Enter a move for Black: ");
+                continue;
+            } else {
+                customBoard.setPieceAt(convertSquareToArray(start), convertSquareToArray(end));
+            }
+
+            for (int i = 0; i < customBoard.getBoard().length; i++) {
+                for (int j = 0; j < customBoard.getBoard()[0].length; j++) {
+                    System.out.print(customBoard.getBoard()[i][j] + " ");
+                }
+                System.out.println();
+            }
+            whiteToMove = !whiteToMove;
         }
     }
 }

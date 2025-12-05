@@ -11,6 +11,7 @@ public class BoardPanel extends JPanel {
     private final Board board;
     private final JButton[][] buttons = new JButton[8][8];
 
+    private int[] selectedSquare = null;
 
     private final Color lightColor = new Color(240, 217, 181);
     private final Color darkColor = new Color(181, 136, 99);
@@ -43,8 +44,57 @@ public class BoardPanel extends JPanel {
                     button.setBackground(darkColor);
                 }
 
+                final int r = row;
+                final int c = col;
+                button.addActionListener(e -> handleSquareClick(r, c));
+
                 buttons[row][col] = button;
                 add(button);
+            }
+        }
+    }
+
+    private void handleSquareClick(int row, int col) {
+        if (selectedSquare == null) {
+            Piece[][] boardArray = board.getBoard();
+            Piece piece = boardArray[row][col];
+
+            if (piece == null) {
+                return;
+            }
+
+            selectedSquare = new int[]{row, col};
+            highlightSelectedSquare();
+        } else {
+            int[] from = selectedSquare;
+            int[] to = new int[]{row, col};
+
+            board.setPieceAt(from, to);
+
+            selectedSquare = null;
+            resetSquareColors();
+            refreshBoard();
+        }
+    }
+
+    private void highlightSelectedSquare() {
+        resetSquareColors();
+
+        if (selectedSquare != null) {
+            int row = selectedSquare[0];
+            int col = selectedSquare[1];
+            buttons[row][col].setBackground(selectedColor);
+        }
+    }
+
+    private void resetSquareColors() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if ((row + col) % 2 == 0) {
+                    buttons[row][col].setBackground(lightColor);
+                } else {
+                    buttons[row][col].setBackground(darkColor);
+                }
             }
         }
     }

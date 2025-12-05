@@ -8,12 +8,15 @@ import java.awt.*;
 public class ChessWindow extends JFrame {
 
     private Board board;
+    private BoardPanel boardPanel;
 
     public ChessWindow() {
         this.board = new Board();
+        this.boardPanel = new BoardPanel(board);
 
         setTitle("Chess Training App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        add(boardPanel);
         pack();
         setLocationRelativeTo(null);
     }

@@ -23,13 +23,9 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalMoves(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
     public List<Position> getLegalMoves(Piece[][] board, Position position) {
         List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
         int x = position.row();
         int y = position.col();
 
@@ -73,13 +69,9 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalMovesSimple(int[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
     public List<Position> getLegalMovesSimple(int[][] board, Position position) {
         List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
         int x = position.row();
         int y = position.col();
 
@@ -94,13 +86,9 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalCaptures(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
     public List<Position> getLegalCaptures(Piece[][] board, Position position) {
         List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
         int x = position.row();
         int y = position.col();
 

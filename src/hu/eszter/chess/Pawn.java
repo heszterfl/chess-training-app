@@ -9,26 +9,26 @@ public class Pawn extends Piece {
         super(color);
         if (color.equals("white")) {
             this.startingPosition = switch (column) {
-                case 0 -> new int[]{6, 0};
-                case 1 -> new int[]{6, 1};
-                case 2 -> new int[]{6, 2};
-                case 3 -> new int[]{6, 3};
-                case 4 -> new int[]{6, 4};
-                case 5 -> new int[]{6, 5};
-                case 6 -> new int[]{6, 6};
-                case 7 -> new int[]{6, 7};
+                case 0 -> new Position(6, 0);
+                case 1 -> new Position(6, 1);
+                case 2 -> new Position(6, 2);
+                case 3 -> new Position(6, 3);
+                case 4 -> new Position(6, 4);
+                case 5 -> new Position(6, 5);
+                case 6 -> new Position(6, 6);
+                case 7 -> new Position(6, 7);
                 default -> null;
             };
         } else if (color.equals("black")) {
             this.startingPosition = switch (column) {
-                case 0 -> new int[]{1, 0};
-                case 1 -> new int[]{1, 1};
-                case 2 -> new int[]{1, 2};
-                case 3 -> new int[]{1, 3};
-                case 4 -> new int[]{1, 4};
-                case 5 -> new int[]{1, 5};
-                case 6 -> new int[]{1, 6};
-                case 7 -> new int[]{1, 7};
+                case 0 -> new Position(1, 0);
+                case 1 -> new Position(1, 1);
+                case 2 -> new Position(1, 2);
+                case 3 -> new Position(1, 3);
+                case 4 -> new Position(1, 4);
+                case 5 -> new Position(1, 5);
+                case 6 -> new Position(1, 6);
+                case 7 -> new Position(1, 7);
                 default -> null;
             };
         }
@@ -36,39 +36,39 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalMoves(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMoves(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
         // Check if black or white
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 //        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
         boolean isFirstMove = (color.equals("white") && x == 6) || (color.equals("black") && x == 1);
 
         if (color.equals("white")) {
             if (isFirstMove) {
                 if (board[x-1][y] == null) {
-                    moves.add(new int[]{x-1, y});
-                }
-                if (board[x-2][y] == null) {
-                    moves.add(new int[]{x-2, y});
+                    moves.add(new Position(x-1, y));
+                    if (board[x-2][y] == null) {
+                        moves.add(new Position(x-2, y));
+                    }
                 }
             } else {
                 if (board[x-1][y] == null) {
-                    moves.add(new int[]{x-1, y});
+                    moves.add(new Position(x-1, y));
                 }
             }
         } else {
             if (isFirstMove) {
                 if (board[x+1][y] == null) {
-                    moves.add(new int[]{x+1, y});
-                }
-                if (board[x+2][y] == null) {
-                    moves.add(new int[]{x+2, y});
+                    moves.add(new Position(x+1, y));
+                    if (board[x+2][y] == null) {
+                        moves.add(new Position(x+2, y));
+                    }
                 }
             } else {
                 if (board[x+1][y] == null) {
-                    moves.add(new int[]{x+1, y});
+                    moves.add(new Position(x+1, y));
                 }
             }
         }
@@ -76,28 +76,28 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalMovesSimple(int[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMovesSimple(int[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
         // Check if black or white
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 //        boolean isFirstMove = (!color.equals("white") || x >= 6) && (!color.equals("black") || x <= 1);
         boolean isFirstMove = (color.equals("white") && x == 6) || (color.equals("black") && x == 1);
 
         if (color.equals("white")) {
             if (isFirstMove) {
-                moves.add(new int[]{x-1, y});
-                moves.add(new int[]{x-2, y});
+                moves.add(new Position(x-1, y));
+                moves.add(new Position(x-2, y));
             } else {
-                moves.add(new int[]{x-1, y});
+                moves.add(new Position(x-1, y));
             }
         } else {
             if (isFirstMove) {
-                moves.add(new int[]{x+1, y});
-                moves.add(new int[]{x+2, y});
+                moves.add(new Position(x+1, y));
+                moves.add(new Position(x+2, y));
             } else {
-                moves.add(new int[]{x+1, y});
+                moves.add(new Position(x+1, y));
             }
         }
         return moves;
@@ -109,25 +109,25 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalCaptures(Piece[][] board, int[] position) {
+    public List<Position> getLegalCaptures(Piece[][] board, Position position) {
 
-        List<int[]> captures = new ArrayList<>();
-        int x = position[0];
-        int y = position[1];
+        List<Position> captures = new ArrayList<>();
+        int x = position.row();
+        int y = position.col();
 
         if (color.equals("white")) {
             if (y-1 >= 0 && board[x-1][y-1] != null && !(board[x-1][y-1].color).equals(this.color)) {
-                captures.add(new int[]{x-1,y-1});
+                captures.add(new Position(x-1,y-1));
             }
             if (y+1 < board[0].length && board[x-1][y+1] != null && !(board[x-1][y+1].color).equals(this.color)) {
-                captures.add(new int[]{x-1,y+1});
+                captures.add(new Position(x-1,y+1));
             }
         } else {
             if (y-1 >= 0 && board[x+1][y-1] != null && !(board[x+1][y-1].color).equals(this.color)) {
-                captures.add(new int[]{x+1,y-1});
+                captures.add(new Position(x+1,y-1));
             }
             if (y+1 < board[0].length && board[x+1][y+1] != null && !(board[x+1][y+1].color).equals(this.color)) {
-                captures.add(new int[]{x+1,y+1});
+                captures.add(new Position(x+1,y+1));
             }
         }
 

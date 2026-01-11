@@ -4,8 +4,8 @@ import java.util.List;
 
 public abstract class Piece {
 
-    public int[] startingPosition;
-    public int[] currentPosition;
+    public Position startingPosition;
+    public Position currentPosition;
 
     public String color;
 
@@ -14,21 +14,21 @@ public abstract class Piece {
         this.color = color;
     }
 
-    public abstract List<int[]> getLegalMoves(Piece[][] board, int[] position);
+    public abstract List<Position> getLegalMoves(Piece[][] board, Position position);
 
-    public abstract List<int[]> getLegalMovesSimple(int[][] board, int[] position);
+    public abstract List<Position> getLegalMovesSimple(int[][] board, Position position);
 
-    public abstract List<int[]> getLegalCaptures(Piece[][] board, int[] position);
+    public abstract List<Position> getLegalCaptures(Piece[][] board, Position position);
 
     public int[] getStartingPosition() {
-        return new int[]{this.startingPosition[0], this.startingPosition[1]};
+        return new int[]{this.startingPosition.row(), this.startingPosition.col()};
     }
 
-    public int[] getCurrentPosition() {
-        return new int[]{this.currentPosition[0], this.currentPosition[1]};
+    public Position getCurrentPosition() {
+        return new Position(this.currentPosition.row(), this.currentPosition.col());
     }
 
-    public void setCurrentPosition(int[] position) {
+    public void setCurrentPosition(Position position) {
         this.currentPosition = position;
     }
 }

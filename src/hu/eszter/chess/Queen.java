@@ -7,42 +7,42 @@ public class Queen extends Piece {
 
     public Queen(String color) {
         super(color);
-        this.startingPosition = color.equals("white") ? new int[]{7, 3} : new int[]{0, 3};
+        this.startingPosition = color.equals("white") ? new Position(7, 3) : new Position(0, 3);
         this.currentPosition = startingPosition;
     }
 
     @Override
-    public List<int[]> getLegalMoves(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMoves(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         // Up
         int currentX = x - 1;
         while (currentX >= 0 && board[currentX][y] == null) {
-            moves.add(new int[]{currentX,y});
+            moves.add(new Position(currentX,y));
             currentX--;
         }
 
         // Down
         currentX = x + 1;
         while (currentX < board.length && board[currentX][y] == null) {
-            moves.add(new int[]{currentX, y});
+            moves.add(new Position(currentX, y));
             currentX++;
         }
 
         // Left
         int currentY = y - 1;
         while (currentY >= 0 && board[x][currentY] == null) {
-            moves.add(new int[]{x, currentY});
+            moves.add(new Position(x, currentY));
             currentY--;
         }
 
         // Right
         currentY = y + 1;
         while (currentY < board[0].length && board[x][currentY] == null) {
-            moves.add(new int[]{x, currentY});
+            moves.add(new Position(x, currentY));
             currentY++;
         }
 
@@ -51,7 +51,7 @@ public class Queen extends Piece {
         currentY = y-1;
         while (currentX >= 0 && currentY >= 0 &&
                 board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX--;
             currentY--;
         }
@@ -61,7 +61,7 @@ public class Queen extends Piece {
         currentY = y + 1;
         while (currentX < board.length && currentY < board[0].length &&
                 board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX++;
             currentY++;
         }
@@ -71,7 +71,7 @@ public class Queen extends Piece {
         currentY = y + 1;
         while (currentX >= 0 && currentY < board[0].length &&
                 board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX--;
             currentY++;
         }
@@ -81,7 +81,7 @@ public class Queen extends Piece {
         currentY = y - 1;
         while (currentX < board.length && currentY >= 0 &&
                 board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX++;
             currentY--;
         }
@@ -90,17 +90,17 @@ public class Queen extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalMovesSimple(int[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMovesSimple(int[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 if ((Math.abs(x - i) == Math.abs(y - j) && !(x == i && y == j))
                         || ((i == x) ^ (j == y))) {
-                    moves.add(new int[]{i,j});
+                    moves.add(new Position(i,j));
                 }
             }
         }
@@ -108,11 +108,11 @@ public class Queen extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalCaptures(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalCaptures(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         // Up
         int currentX = x - 1;
@@ -123,7 +123,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX,y});
+                moves.add(new Position(currentX,y));
             }
             break;
         }
@@ -137,7 +137,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, y});
+                moves.add(new Position(currentX, y));
             }
             break;
         }
@@ -151,7 +151,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{x, currentY});
+                moves.add(new Position(x, currentY));
             }
             break;
         }
@@ -165,7 +165,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{x, currentY});
+                moves.add(new Position(x, currentY));
             }
             break;
         }
@@ -181,7 +181,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }
@@ -197,7 +197,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }
@@ -213,7 +213,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }
@@ -229,7 +229,7 @@ public class Queen extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }

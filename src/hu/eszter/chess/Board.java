@@ -18,13 +18,13 @@ public class Board {
         for (int i = 0; i < board.length; i++) {
             Piece pawn = new Pawn("black", i);
             board[1][i] = pawn;
-            pawn.startingPosition = new int[]{1, i};
+            pawn.startingPosition = new Position(1, i);
         }
 
         for (int i = 0; i < board.length; i++) {
             Piece pawn = new Pawn("white", i);
             board[6][i] = pawn;
-            pawn.startingPosition = new int[]{6, i};
+            pawn.startingPosition = new Position(6, i);
         }
 
         Piece whiteKing = new King("white");
@@ -77,24 +77,24 @@ public class Board {
         return board;
     }
 
-    public Piece getPieceAt(Piece[][]board, int[] position) {
-        if (board[position[0]][position[1]] == null) {
+    public Piece getPieceAt(Piece[][] board, Position position) {
+        if (board[position.row()][position.col()] == null) {
             return null;
         }
-        return board[position[0]][position[1]];
+        return board[position.row()][position.col()];
     }
 
-    public void setPieceAt(int[] currentPosition, int[] newPos) {
-        int currentX = currentPosition[0];
-        int currentY = currentPosition[1];
-        int newX = newPos[0];
-        int newY = newPos[1];
-        Piece piece = getPieceAt(currentPosition);
+    public void setPieceAt(Position currentPosition, Position newPos) {
+        int currentX = currentPosition.row();
+        int currentY = currentPosition.col();
+        int newX = newPos.row();
+        int newY = newPos.col();
+
         Piece piece = getPieceAt(board, currentPosition);
 
-        ListIterator<int[]> it;
+        ListIterator<Position> it;
         if (board[newX][newY] == null) {
-            List<int[]> possibleMoves = piece.getLegalMoves(board, piece.getCurrentPosition());
+            List<Position> possibleMoves = piece.getLegalMoves(board, piece.getCurrentPosition());
 
             System.out.println("Current board: ");
             for (Piece[] pieces : board) {
@@ -106,8 +106,8 @@ public class Board {
 
             it = possibleMoves.listIterator();
             while (it.hasNext()) {
-                if (Arrays.equals(it.next(), newPos)) {
-                    if ((piece instanceof Pawn && (piece.color.equals("white") && newPos[0] == 0) || (piece.color.equals("black") && newPos[0] == 7))) {
+                if (it.next().equals(newPos)) {
+                    if ((piece instanceof Pawn && (piece.color.equals("white") && newPos.row() == 0) || (piece.color.equals("black") && newPos.row() == 7))) {
                         Piece newPiece = getPiece(newPos, piece);
                         board[newX][newY] = newPiece;
                     } else {
@@ -118,7 +118,7 @@ public class Board {
                 }
             }
         } else {
-            List<int[]> possibleCaptures = piece.getLegalCaptures(board, piece.getCurrentPosition());
+            List<Position> possibleCaptures = piece.getLegalCaptures(board, piece.getCurrentPosition());
             System.out.println(piece);
             System.out.println("Current board: ");
             for (Piece[] pieces : board) {
@@ -130,10 +130,10 @@ public class Board {
 
             it = possibleCaptures.listIterator();
             while (it.hasNext()) {
-                if (Arrays.equals(it.next(), newPos)) {
+                if (it.next().equals(newPos)) {
                     Piece toRemove = getPieceAt(this.getBoard(), newPos);
                     removed.add(toRemove);
-                    if (piece instanceof Pawn && (piece.color.equals("white") && newPos[0] == 0) || (piece.color.equals("black") && newPos[0] == 7)) {
+                    if (piece instanceof Pawn && (piece.color.equals("white") && newPos.row() == 0) || (piece.color.equals("black") && newPos.row() == 7)) {
                         Piece newPiece = getPiece(newPos, piece);
                         board[newX][newY] = newPiece;
                     } else {
@@ -146,7 +146,7 @@ public class Board {
         }
     }
 
-    private static Piece getPiece(int[] newPos, Piece piece) {
+    private static Piece getPiece(Position newPos, Piece piece) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("getPiece(): ");
         String input = scanner.next();

@@ -8,16 +8,16 @@ public class Bishop extends Piece {
     public Bishop(String color, String side) {
         super(color);
         if (side.equals("queen") && color.equals("white")) {
-            this.startingPosition = new int[]{7, 2};
+            this.startingPosition = new Position(7, 2);
         }
         if (side.equals("king") && color.equals("white")) {
-            this.startingPosition = new int[]{7, 5};
+            this.startingPosition = new Position(7, 5);
         }
         if (side.equals("queen") && color.equals("black")) {
-            this.startingPosition = new int[]{0, 2};
+            this.startingPosition = new Position(0, 2);
         }
         if (side.equals("king") && color.equals("black")) {
-            this.startingPosition = new int[]{0, 5};
+            this.startingPosition = new Position(0, 5);
         }
         this.currentPosition = startingPosition;
     }
@@ -25,15 +25,19 @@ public class Bishop extends Piece {
     @Override
     public List<int[]> getLegalMoves(Piece[][] board, int[] position) {
         List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMoves(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
         int x = position[0];
         int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         // Up-left
         int currentX = x-1;
         int currentY = y-1;
         while (currentX >= 0 && currentY >= 0 && board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX--;
             currentY--;
         }
@@ -42,7 +46,7 @@ public class Bishop extends Piece {
         currentX = x + 1;
         currentY = y + 1;
         while (currentX < board.length && currentY < board[0].length && board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX++;
             currentY++;
         }
@@ -51,7 +55,7 @@ public class Bishop extends Piece {
         currentX = x - 1;
         currentY = y + 1;
         while (currentX >= 0 && currentY < board[0].length && board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX--;
             currentY++;
         }
@@ -60,7 +64,7 @@ public class Bishop extends Piece {
         currentX = x + 1;
         currentY = y - 1;
         while (currentX < board.length && currentY >= 0 && board[currentX][currentY] == null) {
-            moves.add(new int[]{currentX, currentY});
+            moves.add(new Position(currentX, currentY));
             currentX++;
             currentY--;
         }
@@ -71,14 +75,18 @@ public class Bishop extends Piece {
     @Override
     public List<int[]> getLegalMovesSimple(int[][] board, int[] position) {
         List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMovesSimple(int[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
         int x = position[0];
         int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 if (Math.abs(x - i) == Math.abs(y - j) && !(x == i && y == j)) {
-                    moves.add(new int[]{i,j});
+                    moves.add(new Position(i,j));
                 }
             }
         }
@@ -88,9 +96,13 @@ public class Bishop extends Piece {
     @Override
     public List<int[]> getLegalCaptures(Piece[][] board, int[] position) {
         List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalCaptures(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
         int x = position[0];
         int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         // Up-left
         int currentX = x-1;
@@ -103,7 +115,7 @@ public class Bishop extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }
@@ -119,7 +131,7 @@ public class Bishop extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }
@@ -135,7 +147,7 @@ public class Bishop extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }
@@ -151,7 +163,7 @@ public class Bishop extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, currentY});
+                moves.add(new Position(currentX, currentY));
             }
             break;
         }

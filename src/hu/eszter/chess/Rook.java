@@ -8,51 +8,51 @@ public class Rook extends Piece {
     public Rook(String color, String side) {
         super(color);
         if (side.equals("queen") && color.equals("white")) {
-            this.startingPosition = new int[]{7, 0};
+            this.startingPosition = new Position(7, 0);
         }
         if (side.equals("king") && color.equals("white")) {
-            this.startingPosition = new int[]{7, 7};
+            this.startingPosition = new Position(7, 7);
         }
         if (side.equals("queen") && color.equals("black")) {
-            this.startingPosition = new int[]{0, 0};
+            this.startingPosition = new Position(0, 0);
         }
         if (side.equals("king") && color.equals("black")) {
-            this.startingPosition = new int[]{0, 7};
+            this.startingPosition = new Position(0, 7);
         }
         this.currentPosition = startingPosition;
     }
 
     @Override
-    public List<int[]> getLegalMoves(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
-        int x = position[0];
-        int y = position[1];
+    public List<Position> getLegalMoves(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
+        int x = position.row();
+        int y = position.col();
 
         // Up
         int currentX = x - 1;
         while (currentX >= 0 && board[currentX][y] == null) {
-            moves.add(new int[]{currentX,y});
+            moves.add(new Position(currentX,y));
             currentX--;
         }
 
         // Down
         currentX = x + 1;
         while (currentX < board.length && board[currentX][y] == null) {
-            moves.add(new int[]{currentX, y});
+            moves.add(new Position(currentX, y));
             currentX++;
         }
 
         // Left
         int currentY = y - 1;
         while (currentY >= 0 && board[x][currentY] == null) {
-            moves.add(new int[]{x, currentY});
+            moves.add(new Position(x, currentY));
             currentY--;
         }
 
         // Right
         currentY = y + 1;
         while (currentY < board[0].length && board[x][currentY] == null) {
-            moves.add(new int[]{x, currentY});
+            moves.add(new Position(x, currentY));
             currentY++;
         }
 
@@ -60,16 +60,16 @@ public class Rook extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalMovesSimple(int[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMovesSimple(int[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 if ((i == x) ^ (j == y)) {
-                    moves.add(new int[]{i,j});
+                    moves.add(new Position(i,j));
                 }
             }
         }
@@ -77,10 +77,10 @@ public class Rook extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalCaptures(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
-        int x = position[0];
-        int y = position[1];
+    public List<Position> getLegalCaptures(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
+        int x = position.row();
+        int y = position.col();
 
         // Up
         int currentX = x - 1;
@@ -92,7 +92,7 @@ public class Rook extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX,y});
+                moves.add(new Position(currentX,y));
             }
             break;
         }
@@ -106,7 +106,7 @@ public class Rook extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{currentX, y});
+                moves.add(new Position(currentX, y));
             }
             break;
         }
@@ -120,7 +120,7 @@ public class Rook extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{x, currentY});
+                moves.add(new Position(x, currentY));
             }
             break;
         }
@@ -134,7 +134,7 @@ public class Rook extends Piece {
                 continue;
             }
             if (!(p.color).equals(this.color)) {
-                moves.add(new int[]{x, currentY});
+                moves.add(new Position(x, currentY));
             }
             break;
         }

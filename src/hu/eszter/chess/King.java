@@ -7,16 +7,16 @@ public class King extends Piece {
 
     public King(String color) {
         super(color);
-        this.startingPosition = color.equals("white") ? new int[]{7, 4} : new int[]{0, 4};
+        this.startingPosition = color.equals("white") ? new Position(7, 4) : new Position(0, 4);
         this.currentPosition = startingPosition;
     }
 
     @Override
-    public List<int[]> getLegalMoves(Piece[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMoves(Piece[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
@@ -27,9 +27,9 @@ public class King extends Piece {
                 // Check if within board bounds
                 if (newRow >= 0 && newRow < board.length &&
                         newCol >= 0 && newCol < board[0].length && board[newRow][newCol] == null) {
-                    int[] newSquare = new int[]{newRow, newCol};
+                    Position newSquare = new Position(newRow, newCol);
                     if (!isProtected(board, newSquare)) {
-                        moves.add(new int[]{newRow, newCol});
+                        moves.add(new Position(newRow, newCol));
                     }
                 }
             }
@@ -38,11 +38,11 @@ public class King extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalMovesSimple(int[][] board, int[] position) {
-        List<int[]> moves = new ArrayList<>();
+    public List<Position> getLegalMovesSimple(int[][] board, Position position) {
+        List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
@@ -53,7 +53,7 @@ public class King extends Piece {
                 // Check if within board bounds
                 if (newRow >= 0 && newRow < board.length &&
                         newCol >= 0 && newCol < board[0].length) {
-                    moves.add(new int[]{newRow, newCol});
+                    moves.add(new Position(newRow, newCol));
                 }
             }
         }
@@ -61,12 +61,12 @@ public class King extends Piece {
     }
 
     @Override
-    public List<int[]> getLegalCaptures(Piece[][] board, int[] position) {
+    public List<Position> getLegalCaptures(Piece[][] board, Position position) {
 
-        List<int[]> moves = new ArrayList<>();
+        List<Position> moves = new ArrayList<>();
 
-        int x = position[0];
-        int y = position[1];
+        int x = position.row();
+        int y = position.col();
 
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
@@ -78,9 +78,9 @@ public class King extends Piece {
                 if (newRow >= 0 && newRow < board.length &&
                         newCol >= 0 && newCol < board[0].length && board[newRow][newCol] != null &&
                         !(board[newRow][newCol].color).equals(this.color)) {
-                    int[] newSquare = new int[]{newRow, newCol};
+                    Position newSquare = new Position(newRow, newCol);
                     if (!isProtected(board, newSquare)) {
-                        moves.add(new int[]{newRow, newCol});
+                        moves.add(new Position(newRow, newCol));
                     }
                 }
             }
@@ -93,10 +93,10 @@ public class King extends Piece {
         return this.color.equals("white") ? "WhiteKing" : "BlackKing";
     }
 
-    public boolean isProtected(Piece[][] board, int[] square) {
+    public boolean isProtected(Piece[][] board, Position square) {
 
-        int x = square[0];
-        int y = square[1];
+        int x = square.row();
+        int y = square.col();
 
         // Up
         int currentX = x - 1;

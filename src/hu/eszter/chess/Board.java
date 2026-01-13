@@ -10,7 +10,6 @@ public class Board {
     public static Piece[][] board;
     List<Piece> whiteArmy;
     List<Piece> blackArmy;
-    List<Piece> removed = new ArrayList<>();
     private List<Piece> removed = new ArrayList<>();
     private List<Move> pastMoves = new ArrayList<>();
     private Move lastMove;

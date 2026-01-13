@@ -1,4 +1,4 @@
 package hu.eszter.chess;
 
-public record Position() {
+public record Position(int row, int col) {
 }

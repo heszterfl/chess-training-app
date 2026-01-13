@@ -134,4 +134,27 @@ public class Pawn extends Piece {
         return captures;
     }
 
+    // ellenőrzi, hogy enPassant lehetséges és visszaadja a mezőt, ahova en passant-tal lehet lépni
+    public Position getEnPassant(Move lastMove) {
+
+        if (lastMove == null) {
+            return null;
+        }
+
+        int columnOfP = this.getCurrentPosition().col();
+        int rowOfP = this.getCurrentPosition().row();
+        int columnDiff = Math.abs(columnOfP - lastMove.to().col());
+
+        if (this.getColor().equals("white") && rowOfP == 3 &&
+                lastMove.color().equals("black") && lastMove.from().row() == 1 &&
+                lastMove.to().row() == 3 && columnDiff == 1) {
+            return new Position(rowOfP - 1, lastMove.to().col());
+        } else if (this.getColor().equals("black") && rowOfP == 4 &&
+                lastMove.color().equals("white") && lastMove.from().row() == 6 &&
+                lastMove.to().row() == 4 && columnDiff == 1) {
+            return new Position(rowOfP + 1, lastMove.to().col());
+        } else {
+            return null;
+        }
+    }
 }

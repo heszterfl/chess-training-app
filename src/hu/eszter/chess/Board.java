@@ -11,6 +11,9 @@ public class Board {
     List<Piece> whiteArmy;
     List<Piece> blackArmy;
     List<Piece> removed = new ArrayList<>();
+    private List<Piece> removed = new ArrayList<>();
+    private List<Move> pastMoves = new ArrayList<>();
+    private Move lastMove;
 
     public Board() {
         board = new Piece[8][8];
@@ -160,6 +163,23 @@ public class Board {
         return newPiece;
     }
 
+    public void moveEnPassant(Piece pawn, Position currentPos, Position newPos) {
+
+        // remove enemy pawn
+        Piece toRemove = getPieceAt(this.getBoard(), new Position(currentPos.row(), newPos.col()));
+        removed.add(toRemove);
+        board[currentPos.row()][newPos.col()] = null;
+
+        // set capturing pawn's new position
+        pawn.setCurrentPosition(newPos);
+
+        // put pawn on new square, delete pawn from old square
+        board[newPos.row()][newPos.col()] = pawn;
+        board[currentPos.row()][currentPos.col()] = null;
+
+        printBoard();
+    }
+
     public void initializeBoard() {
         for (Piece p : whiteArmy) {
             int[] pos = p.getStartingPosition();
@@ -170,6 +190,23 @@ public class Board {
             int[] pos = p.getStartingPosition();
             board[pos[0]][pos[1]] = p;
             p.currentPosition = p.startingPosition;
+        }
+    }
+    public List<Move> getPastMoves() {
+        return pastMoves;
+    }
+
+    public Move getLastMove() {
+        return lastMove;
+    }
+
+    public void printBoard() {
+        System.out.println("Current board: ");
+        for (Piece[] pieces : board) {
+            for (int j = 0; j < board[0].length; j++) {
+                System.out.print(pieces[j] + " ");
+            }
+            System.out.println();
         }
     }
 }

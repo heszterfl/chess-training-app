@@ -13,6 +13,7 @@ public class Board {
     private List<Piece> removed = new ArrayList<>();
     private List<Move> pastMoves = new ArrayList<>();
     private Move lastMove;
+    boolean whiteToMove = true;
 
     public Board() {
         board = new Piece[8][8];
@@ -86,69 +87,88 @@ public class Board {
         return board[position.row()][position.col()];
     }
 
-    public void setPieceAt(Position currentPosition, Position newPos) {
+    public void applyMove(Piece piece, Position currentPosition, Position newPos) {
         int currentX = currentPosition.row();
         int currentY = currentPosition.col();
         int newX = newPos.row();
         int newY = newPos.col();
 
-        Piece piece = getPieceAt(board, currentPosition);
+        piece.setCurrentPosition(newPos);
+        board[newX][newY] = piece;
+        board[currentX][currentY] = null;
 
-        ListIterator<Position> it;
-        if (board[newX][newY] == null) {
-            List<Position> possibleMoves = piece.getLegalMoves(board, piece.getCurrentPosition());
+        lastMove = new Move(piece, piece.getColor(), currentPosition, newPos);
+        pastMoves.add(lastMove);
 
-            System.out.println("Current board: ");
-            for (Piece[] pieces : board) {
-                for (int j = 0; j < board[0].length; j++) {
-                    System.out.print(pieces[j] + " ");
+        whiteToMove = !whiteToMove;
+    }
+
+    public boolean tryMove(Position currentPos, Position newPos) {
+
+        if (!inbounds(currentPos) || !inbounds(newPos)) return false;
+
+        Piece piece = getPieceAt(board, currentPos);
+        if (piece == null) {
+            return false;
+        }
+
+        if (currentPos.equals(newPos)) {
+            return false;
+        }
+
+        boolean targetEmpty = getPieceAt(board, newPos) == null;
+
+        if (targetEmpty) {
+            if (piece instanceof Pawn pawn) {
+                Position ep = pawn.getEnPassant(getLastMove());
+                if (ep != null && ep.equals(newPos)) {
+                    moveEnPassant(pawn, currentPos, newPos);
+                    return true;
                 }
-                System.out.println();
             }
 
-            it = possibleMoves.listIterator();
-            while (it.hasNext()) {
-                if (it.next().equals(newPos)) {
-                    if ((piece instanceof Pawn && (piece.color.equals("white") && newPos.row() == 0) || (piece.color.equals("black") && newPos.row() == 7))) {
-                        Piece newPiece = getPiece(newPos, piece);
-                        board[newX][newY] = newPiece;
-                    } else {
-                        piece.setCurrentPosition(newPos);
-                        board[newX][newY] = piece;
-                    }
-                    board[currentX][currentY] = null;
-                }
+            if (!piece.getLegalMoves(board, currentPos).contains(newPos)) {
+                return false;
             }
+
+            if (isPromotionSquare(piece, newPos)) {
+                Piece newPiece = new Queen(piece.color);
+                applyMove(newPiece, currentPos, newPos);
+                return true;
+            }
+
+            applyMove(piece, currentPos, newPos);
+            return true;
         } else {
-            List<Position> possibleCaptures = piece.getLegalCaptures(board, piece.getCurrentPosition());
-            System.out.println(piece);
-            System.out.println("Current board: ");
-            for (Piece[] pieces : board) {
-                for (int j = 0; j < board[0].length; j++) {
-                    System.out.print(pieces[j] + " ");
-                }
-                System.out.println();
+            if (!piece.getLegalCaptures(board, currentPos).contains(newPos)) {
+                return false;
             }
 
-            it = possibleCaptures.listIterator();
-            while (it.hasNext()) {
-                if (it.next().equals(newPos)) {
-                    Piece toRemove = getPieceAt(this.getBoard(), newPos);
-                    removed.add(toRemove);
-                    if (piece instanceof Pawn && (piece.color.equals("white") && newPos.row() == 0) || (piece.color.equals("black") && newPos.row() == 7)) {
-                        Piece newPiece = getPiece(newPos, piece);
-                        board[newX][newY] = newPiece;
-                    } else {
-                        piece.setCurrentPosition(newPos);
-                        board[newX][newY] = piece;
-                    }
-                    board[currentX][currentY] = null;
-                }
+            Piece toRemove = getPieceAt(board, newPos);
+            if (toRemove != null) removed.add(toRemove);
+
+            if (isPromotionSquare(piece, newPos)) {
+                Piece newPiece = new Queen(piece.color);
+                applyMove(newPiece, currentPos, newPos);
+                return true;
             }
+
+            applyMove(piece, currentPos, newPos);
+            return true;
         }
     }
 
+    private boolean inbounds(Position pos) {
+        return pos.row() >= 0 && pos.row() <= 7 && pos.col() >= 0 && pos.col() <= 7;
+    }
+
+    private boolean isPromotionSquare(Piece piece, Position to) {
+        return piece instanceof Pawn &&
+                ((piece.color.equals("white") && to.row() == 0) || (piece.color.equals("black") && to.row() == 7));
+    }
+
     private static Piece getPiece(Position newPos, Piece piece) {
+        // TODO: replace console input with UI selection
         Scanner scanner = new Scanner(System.in);
         System.out.println("getPiece(): ");
         String input = scanner.next();
@@ -158,23 +178,17 @@ public class Board {
             case "rook" -> new Rook(piece.color);
             default -> new Queen(piece.color);
         };
-        newPiece.setCurrentPosition(newPos);
+
         return newPiece;
     }
 
     public void moveEnPassant(Piece pawn, Position currentPos, Position newPos) {
 
-        // remove enemy pawn
         Piece toRemove = getPieceAt(this.getBoard(), new Position(currentPos.row(), newPos.col()));
         removed.add(toRemove);
         board[currentPos.row()][newPos.col()] = null;
 
-        // set capturing pawn's new position
-        pawn.setCurrentPosition(newPos);
-
-        // put pawn on new square, delete pawn from old square
-        board[newPos.row()][newPos.col()] = pawn;
-        board[currentPos.row()][currentPos.col()] = null;
+        applyMove(pawn, currentPos, newPos);
 
         printBoard();
     }
@@ -191,12 +205,17 @@ public class Board {
             p.currentPosition = p.startingPosition;
         }
     }
+
     public List<Move> getPastMoves() {
         return pastMoves;
     }
 
     public Move getLastMove() {
         return lastMove;
+    }
+
+    public boolean isWhiteToMove() {
+        return whiteToMove;
     }
 
     public void printBoard() {

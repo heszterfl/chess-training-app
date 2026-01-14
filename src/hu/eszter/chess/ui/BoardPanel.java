@@ -1,7 +1,6 @@
 package hu.eszter.chess.ui;
 
-import hu.eszter.chess.Board;
-import hu.eszter.chess.Piece;
+import hu.eszter.chess.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,9 +17,14 @@ public class BoardPanel extends JPanel {
     private final Color darkColor = new Color(181, 136, 99);
     private final Color selectedColor = new Color(189, 214, 88);
 
-    public BoardPanel(Board board, JTextArea moveLogArea) {
+    private boolean setupMode;
+
+    private PaletteSelection selectedPalettePiece;
+
+    public BoardPanel(Board board, JTextArea moveLogArea, boolean setupMode) {
         this.board = board;
         this.moveLogArea = moveLogArea;
+        this.setupMode = setupMode;
 
         setLayout(new GridLayout(8, 8));
 
@@ -58,6 +62,33 @@ public class BoardPanel extends JPanel {
     }
 
     private void handleSquareClick(int row, int col) {
+        if (setupMode) {
+            handleSetupClick(row, col);
+        } else {
+            handlePlayClick(row, col);
+        }
+    }
+
+    private void handleSetupClick(int row, int col) {
+        Piece[][] array = board.getBoard();
+        Position pos = new Position(row, col);
+
+        if (selectedPalettePiece == null) {
+            array[row][col] = null;
+        } else {
+            Piece newPiece = PieceFactory.createPiece(
+                    selectedPalettePiece.kind(),
+                    selectedPalettePiece.color(),
+                    pos
+            );
+            array[row][col] = newPiece;
+            newPiece.setCurrentPosition(pos);
+        }
+        refreshBoard();
+    }
+
+    private void handlePlayClick(int row, int col) {
+
         if (selectedSquare == null) {
             Piece[][] boardArray = board.getBoard();
             Piece piece = boardArray[row][col];
@@ -138,10 +169,24 @@ public class BoardPanel extends JPanel {
         repaint();
     }
 
+    public void exitSetupMode() {
+        this.setupMode = false;
+        this.selectedSquare = null;
+        resetSquareColors();
+        refreshBoard();
+        JOptionPane.showMessageDialog(this, "Setup kész. Mostantól a kattintás lépésnek számít.");
+    }
+
     private String shortenPieceString(String s) {
         if (s.length() > 2) {
             return s.substring(0, 2);
         }
         return s;
+    }
+
+    public void setSelectedPalettePiece(PaletteSelection selection) {
+        this.selectedPalettePiece = selection;
+        this.selectedSquare = null;
+        resetSquareColors();
     }
 }

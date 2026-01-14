@@ -7,16 +7,24 @@ import java.awt.*;
 
 public class ChessWindow extends JFrame {
 
-    private Board board;
-    private BoardPanel boardPanel;
+    private final BoardPanel boardPanel;
 
     public ChessWindow() {
-        this.board = new Board();
-        this.boardPanel = new BoardPanel(board);
+        Board board = new Board();
 
         setTitle("Chess Training App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        add(boardPanel);
+        setLayout(new BorderLayout());
+
+        JTextArea moveLogArea = new JTextArea(20, 20);
+        moveLogArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(moveLogArea);
+
+        boardPanel = new BoardPanel(board, moveLogArea);
+
+        add(boardPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.EAST);
+
         pack();
         setLocationRelativeTo(null);
     }

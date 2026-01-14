@@ -10,6 +10,7 @@ public class BoardPanel extends JPanel {
 
     private final Board board;
     private final JButton[][] buttons = new JButton[8][8];
+    private final JTextArea moveLogArea;
 
     private Position selectedSquare = null;
 
@@ -17,8 +18,10 @@ public class BoardPanel extends JPanel {
     private final Color darkColor = new Color(181, 136, 99);
     private final Color selectedColor = new Color(189, 214, 88);
 
-    public BoardPanel(Board board) {
+    public BoardPanel(Board board, JTextArea moveLogArea) {
         this.board = board;
+        this.moveLogArea = moveLogArea;
+
         setLayout(new GridLayout(8, 8));
 
         initBoardButtons();
@@ -63,18 +66,35 @@ public class BoardPanel extends JPanel {
                 return;
             }
 
-            highlightSelectedSquare();
+            if (board.isWhiteToMove() && piece.getColor().equalsIgnoreCase("white")) {
                 selectedSquare = new Position(row, col);
+                highlightSelectedSquare();
+            } else if (!board.isWhiteToMove() && piece.getColor().equalsIgnoreCase("black")) {
+                selectedSquare = new Position(row, col);
+                highlightSelectedSquare();
+            }
+
         } else {
             Position from = new Position(selectedSquare.row(), selectedSquare.col());
             Position to = new Position(row, col);
 
-            board.setPieceAt(from, to);
-
-            selectedSquare = null;
-            resetSquareColors();
-            refreshBoard();
+            boolean moved = board.tryMove(from, to);
+            if (moved) {
+                logMove(from, to);
+                selectedSquare = null;
+                resetSquareColors();
+                refreshBoard();
+            }
         }
+    }
+
+    private void logMove(Position from, Position to) {
+        if (moveLogArea == null) return;
+
+        String fromStr = board.convertSquareToString(from);
+        String toStr = board.convertSquareToString(to);
+
+        moveLogArea.append(fromStr + " -> " + toStr + "\n");
     }
 
     private void highlightSelectedSquare() {

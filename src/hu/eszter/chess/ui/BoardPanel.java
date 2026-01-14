@@ -11,7 +11,7 @@ public class BoardPanel extends JPanel {
     private final Board board;
     private final JButton[][] buttons = new JButton[8][8];
 
-    private int[] selectedSquare = null;
+    private Position selectedSquare = null;
 
     private final Color lightColor = new Color(240, 217, 181);
     private final Color darkColor = new Color(181, 136, 99);
@@ -63,11 +63,11 @@ public class BoardPanel extends JPanel {
                 return;
             }
 
-            selectedSquare = new int[]{row, col};
             highlightSelectedSquare();
+                selectedSquare = new Position(row, col);
         } else {
-            int[] from = selectedSquare;
-            int[] to = new int[]{row, col};
+            Position from = new Position(selectedSquare.row(), selectedSquare.col());
+            Position to = new Position(row, col);
 
             board.setPieceAt(from, to);
 
@@ -81,8 +81,8 @@ public class BoardPanel extends JPanel {
         resetSquareColors();
 
         if (selectedSquare != null) {
-            int row = selectedSquare[0];
-            int col = selectedSquare[1];
+            int row = selectedSquare.row();
+            int col = selectedSquare.col();
             buttons[row][col].setBackground(selectedColor);
         }
     }

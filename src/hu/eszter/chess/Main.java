@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Main {
 
-    public static int[] convertSquareToArray(String square) {
+    public static Position convertSquareToArray(String square) {
 
         String subY = square.substring(0, 1);
         String subX = square.substring(1);
@@ -20,7 +20,7 @@ public class Main {
             default -> -1;
         };
         int x = Integer.parseInt(subX);
-        return new int[]{8 - x, y};
+        return new Position(8 - x, y);
     }
 
     public static String convertSquareToString(int[] position) {
@@ -49,8 +49,6 @@ public class Main {
                 System.out.print(board.getBoard()[i][j] + " ");
         boolean whiteToMove = true;
 
-        HashMap<int[], String> whiteArmy = new HashMap<>();
-        HashMap<int[], String> blackArmy = new HashMap<>();
         whiteArmy.put(convertSquareToArray("e5"), "king");
         whiteArmy.put(convertSquareToArray("d4"), "pawn");
         blackArmy.put(convertSquareToArray("e8"), "king");
@@ -65,6 +63,8 @@ public class Main {
                 System.out.print(customBoard.getBoard()[i][j] + " ");
             }
             System.out.println();
+        HashMap<Position, String> whiteArmy = new HashMap<>();
+        HashMap<Position, String> blackArmy = new HashMap<>();
         }
 
 // READING IN USER INPUT

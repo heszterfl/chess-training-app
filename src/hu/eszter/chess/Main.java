@@ -23,28 +23,9 @@ public class Main {
         return new Position(8 - x, y);
     }
 
-    public static String convertSquareToString(int[] position) {
-        int x = 8 - position[0];
-        int y = position[1];
-        String posX = Integer.toString(x);
-        String posY = switch (y) {
-            case 0 -> "a";
-            case 1 -> "b";
-            case 2 -> "c";
-            case 3 -> "d";
-            case 4 -> "e";
-            case 5 -> "f";
-            case 6 -> "g";
-            case 7 -> "h";
-            default -> "invalid";
-        };
-        return posY + posX;
-    }
-
     public static void main(String[] args) {
 
         Board board;
-        boolean whiteToMove = true;
         Position from;
         Position to;
 
@@ -69,13 +50,15 @@ public class Main {
         }
 
 // READING IN USER INPUT
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("What's your move with " + (whiteToMove ? "white" : "black") + "? (i.e. e2-e4 / e2xf3 / Ng1-f3 / Ng1xf3) ");
-            String input = scanner.nextLine();
+        while (!board.isCheckMate) {
+            board.printBoard();
+            scanner = new Scanner(System.in);
+            System.out.println("What's your move with " + (board.isWhiteToMove() ? "white" : "black") + "? (i.e. e2-e4 / e2xf3 / Ng1-f3 / Ng1xf3) ");
+            String input = scanner.next();
             if (input.equals("q")) {
                 break;
             }
+
             System.out.println("User input: " + input);
 
             String[] split = input.split("[-x]");
@@ -103,28 +86,19 @@ public class Main {
                 end = split[1];
             }
 
-            board.setPieceAt(convertSquareToArray(start), convertSquareToArray(end));
-            if (whiteToMove && customBoard.getPieceAt(customBoard.getBoard(), convertSquareToArray(start)).color.equals("black")) {
-                System.out.println("Enter a move for White: ");
-                continue;
+            from = convertSquareToArray(start);
+            to = convertSquareToArray(end);
+
+            if (board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).color.equals("white")) {
+                board.tryMove(from, to);
+
+            } else if (!board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).color.equals("black")) {
+                board.tryMove(from, to);
             } else {
-                customBoard.setPieceAt(convertSquareToArray(start), convertSquareToArray(end));
+                continue;
             }
 
-            if (!whiteToMove && customBoard.getPieceAt(customBoard.getBoard(), convertSquareToArray(start)).color.equals("white")) {
-                System.out.println("Enter a move for Black: ");
-                continue;
-            } else {
-                customBoard.setPieceAt(convertSquareToArray(start), convertSquareToArray(end));
-            }
-
-            for (int i = 0; i < customBoard.getBoard().length; i++) {
-                for (int j = 0; j < customBoard.getBoard()[0].length; j++) {
-                    System.out.print(customBoard.getBoard()[i][j] + " ");
-                }
-                System.out.println();
-            }
-            whiteToMove = !whiteToMove;
+            board.printBoard();
         }
     }
 }

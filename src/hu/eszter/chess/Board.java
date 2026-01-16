@@ -24,18 +24,6 @@ public class Board {
     public Board() {
         board = new Piece[8][8];
 
-        for (int i = 0; i < board.length; i++) {
-            Piece pawn = new Pawn("black", i);
-            board[1][i] = pawn;
-            pawn.startingPosition = new Position(1, i);
-        }
-
-        for (int i = 0; i < board.length; i++) {
-            Piece pawn = new Pawn("white", i);
-            board[6][i] = pawn;
-            pawn.startingPosition = new Position(6, i);
-        }
-
         Piece whiteKing = new King("white");
         Piece blackKing = new King("black");
         Piece whiteQueen = new Queen("white");
@@ -78,6 +66,23 @@ public class Board {
         blackArmy.add(blackBishopQ);
         blackArmy.add(blackKnightK);
         blackArmy.add(blackKnightQ);
+
+        for (int i = 0; i < board.length; i++) {
+            Piece pawn = new Pawn("black", i);
+            board[1][i] = pawn;
+            pawn.startingPosition = new Position(1, i);
+            blackArmy.add(pawn);
+        }
+
+        for (int i = 0; i < board.length; i++) {
+            Piece pawn = new Pawn("white", i);
+            board[6][i] = pawn;
+            pawn.startingPosition = new Position(6, i);
+            whiteArmy.add(pawn);
+        }
+
+        whiteKingPosition = whiteKing.getCurrentPosition();
+        blackKingPosition = blackKing.getCurrentPosition();
 
         initializeBoard();
     }

@@ -251,7 +251,11 @@ public class Board {
             }
 
             Piece toRemove = getPieceAt(board, newPos);
-            if (toRemove != null) removed.add(toRemove);
+            if (toRemove != null) {
+                removed.add(toRemove);
+                toRemove.setCurrentPosition(null);
+            }
+
 
             if (isPromotionSquare(piece, newPos)) {
                 Piece newPiece = new Queen(piece.color);

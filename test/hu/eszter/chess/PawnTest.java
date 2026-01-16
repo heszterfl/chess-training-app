@@ -7,6 +7,56 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PawnTest {
+
+    @Test
+    void whitePawn_first_move_can_move_one_or_two_if_clear() {
+        Board b = TestBoard.empty();
+        Pawn pawn = new Pawn("white", 4); // e-file
+        TestBoard.place(b, pawn, new Position(6, 4)); // e2
+
+        List<Position> moves = pawn.getLegalMoves(b.getBoard(), pawn.getCurrentPosition());
+
+        assertTrue(moves.contains(new Position(5, 4))); // e3
+        assertTrue(moves.contains(new Position(4, 4))); // e4
+    }
+
+    @Test
+    void whitePawn_first_move_blocked_cannot_move() {
+        Board b = TestBoard.empty();
+        Pawn pawn = new Pawn("white", 4);
+        TestBoard.place(b, pawn, new Position(6, 4)); // e2
+
+        Pawn blocker = new Pawn("white", 4);
+        TestBoard.place(b, blocker, new Position(5, 4)); // e3
+
+        List<Position> moves = pawn.getLegalMoves(b.getBoard(), pawn.getCurrentPosition());
+
+        assertFalse(moves.contains(new Position(5, 4)));
+        assertFalse(moves.contains(new Position(4, 4)));
+    }
+
+    @Test
+    void whitePawn_capture_diagonal_only() {
+        Board b = TestBoard.empty();
+        Pawn pawn = new Pawn("white", 4);
+        TestBoard.place(b, pawn, new Position(6, 4)); // e2
+
+        Pawn enemyLeft = new Pawn("black", 3);
+        TestBoard.place(b, enemyLeft, new Position(5, 3)); // d3
+
+        Pawn enemyFront = new Pawn("black", 5);
+        TestBoard.place(b, enemyFront, new Position(5, 4)); // e3
+
+        Pawn enemyRight = new Pawn("black", 5);
+        TestBoard.place(b, enemyRight, new Position(5, 5)); // f3
+
+        List<Position> captures = pawn.getLegalCaptures(b.getBoard(), pawn.getCurrentPosition());
+
+        assertTrue(captures.contains(new Position(5, 3)));
+        assertFalse(captures.contains(new Position(5, 4)));
+        assertTrue(captures.contains(new Position(5, 5)));
+    }
+
     @Test
     void whitePawn_on_edge_legal_en_passant() {
         Board b = TestBoard.empty();
@@ -59,4 +109,33 @@ public class PawnTest {
         assertNull(enPassantCapture);
     }
 
+    @Test
+    void white_Pawn_capture_within_boundaries() {
+        Board b = TestBoard.empty();
+        Pawn pawnRight = new Pawn("white", 7);
+        Pawn pawnMiddle = new Pawn("white", 4);
+        Pawn pawnLeft = new Pawn("white", 0);
+        TestBoard.place(b, pawnRight, new Position(3, 7)); // h5
+        TestBoard.place(b, pawnMiddle, new Position(3, 4)); // e5
+        TestBoard.place(b, pawnLeft, new Position(3, 0)); // a5
+
+        Queen queenOnG = new Queen("black");
+        TestBoard.place(b, queenOnG, new Position(2, 6));  // g6
+        Queen queenOnD = new Queen("black");
+        TestBoard.place(b, queenOnD, new Position(2, 3));  // d6
+        Queen queenOnF = new Queen("white");
+        TestBoard.place(b, queenOnF, new Position(2, 5));  // f6
+        Queen queenOnB = new Queen("black");
+        TestBoard.place(b, queenOnB, new Position(2, 1));  // b6
+
+        List<Position> capturesRight = pawnRight.getLegalCaptures(b.getBoard(), pawnRight.getCurrentPosition());
+        List<Position> capturesMiddle = pawnMiddle.getLegalCaptures(b.getBoard(), pawnMiddle.getCurrentPosition());
+        List<Position> capturesLeft = pawnLeft.getLegalCaptures(b.getBoard(), pawnLeft.getCurrentPosition());
+
+        assertTrue(capturesLeft.contains(new Position(2, 1)));
+        assertTrue(capturesMiddle.contains(new Position(2, 3)));
+        assertFalse(capturesLeft.contains(new Position(2, 5)));
+        assertTrue(capturesRight.contains(new Position(2, 6)));
+
+    }
 }

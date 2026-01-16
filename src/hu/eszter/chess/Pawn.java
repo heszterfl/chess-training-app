@@ -119,19 +119,27 @@ public class Pawn extends Piece {
         int x = position.row();
         int y = position.col();
 
-        if (color.equals("white")) {
-            if (y-1 >= 0 && board[x-1][y-1] != null && !(board[x-1][y-1].color).equals(this.color)) {
-                captures.add(new Position(x-1,y-1));
+        if (color.equals("white")) {    // White side
+            if (y-1 >= 0) { //  if capture is in bounds on the left
+                if (board[x-1][y-1] != null && !(board[x-1][y-1].color).equals(this.color)) { // if piece to capture exists AND piece is opposite color
+                    captures.add(new Position(x-1,y-1));
+                }
             }
-            if (y+1 < board[0].length && board[x-1][y+1] != null && !(board[x-1][y+1].color).equals(this.color)) {
-                captures.add(new Position(x-1,y+1));
+            if (y+1 < board[0].length) {    // if capture is in bounds on the right
+                if (board[x-1][y+1] != null && !(board[x-1][y+1].color).equals(this.color)) {  // if piece to capture exists AND piece is opposite color
+                    captures.add(new Position(x-1,y+1));
+                }
             }
-        } else {
-            if (y-1 >= 0 && board[x+1][y-1] != null && !(board[x+1][y-1].color).equals(this.color)) {
-                captures.add(new Position(x+1,y-1));
+        } else {    // Black side
+            if (y-1 >= 0) {
+                if (board[x+1][y-1] != null && !(board[x+1][y-1].color).equals(this.color)) {
+                    captures.add(new Position(x+1,y-1));
+                }
             }
-            if (y+1 < board[0].length && board[x+1][y+1] != null && !(board[x+1][y+1].color).equals(this.color)) {
-                captures.add(new Position(x+1,y+1));
+            if (y+1 < board[0].length) {
+                if (board[x+1][y+1] != null && !(board[x+1][y+1].color).equals(this.color)) {
+                    captures.add(new Position(x+1,y+1));
+                }
             }
         }
 

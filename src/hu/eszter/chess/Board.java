@@ -18,6 +18,8 @@ public class Board {
     Position blackKingPosition;
     Position kingPosition = isWhiteToMove() ? whiteKingPosition : blackKingPosition;
     boolean whiteToMove = true;
+    boolean isCheckMate = false;
+
 
     public Board() {
         board = new Piece[8][8];
@@ -111,6 +113,11 @@ public class Board {
         pastMoves.add(lastMove);
 
         whiteToMove = !whiteToMove;
+
+        if (whiteToMove && isCheckmated(whiteKingPosition)) {
+            isCheckMate = true;
+            System.out.println("Checkmate!");
+        }
     }
 
     public boolean tryMove(Position currentPos, Position newPos) {
@@ -282,6 +289,76 @@ public class Board {
             }
         }
         return false;
+    }
+
+    public boolean isCheckmated(Position kingPos) {
+        List<Position> legalCaptures = new ArrayList<>();
+        boolean legalCaptureFound = false;
+        List<Piece> army = isWhiteToMove() ? getWhiteArmy(board) : getBlackArmy(board);
+        for (Piece p : army) {
+            legalCaptures = p.getLegalCaptures(board, p.getCurrentPosition());
+            if (!legalCaptures.isEmpty()) {
+                legalCaptureFound = true;
+                break;
+            }
+        }
+
+        boolean blockingFound = false;
+        List<Position> legalMoves;
+        List<Position> squaresBetween = getSquaresBetween(lastMove.to(), kingPos);
+        for (Piece p : army) {
+            for (Position pos : squaresBetween) {
+                legalMoves = p.getLegalMoves(board, p.getCurrentPosition());
+                if (legalMoves.contains(pos)) {
+                    blockingFound = true;
+                    break;
+                }
+            }
+        }
+
+        Piece king = getPieceAt(board, kingPos);
+        if (isKingInCheck(lastMove.piece())) {
+            if (king.getLegalMoves(board, king.getCurrentPosition()).isEmpty() &&
+                    king.getLegalCaptures(board, king.getCurrentPosition()).isEmpty() &&
+                    legalCaptures.isEmpty() &&
+                    !legalCaptureFound &&
+                    !blockingFound) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<Piece> getWhiteArmy(Piece[][] board) {
+        List<Piece> whiteArmy = new ArrayList<>();
+        for (int i = 0; i <= 7; i++) {
+            for (int j = 0; j <= 7; j++) {
+                if (board[i][j] == null) {
+                    continue;
+                }
+                if (board[i][j].getColor().equals("white")) {
+                    Piece p = getPieceAt(board, new Position(i, j));
+                    whiteArmy.add(p);
+                }
+            }
+        }
+        return whiteArmy;
+    }
+
+    public List<Piece> getBlackArmy(Piece[][] board) {
+        List<Piece> blackArmy = new ArrayList<>();
+        for (int i = 0; i <= 7; i++) {
+            for (int j = 0; j <= 7; j++) {
+                if (board[i][j] == null) {
+                    continue;
+                }
+                if (board[i][j].getColor().equals("black")) {
+                    Piece p = getPieceAt(board, new Position(i, j));
+                    blackArmy.add(p);
+                }
+            }
+        }
+        return blackArmy;
     }
 
     public void moveEnPassant(Piece pawn, Position currentPos, Position newPos) {

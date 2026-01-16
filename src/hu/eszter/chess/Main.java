@@ -43,28 +43,29 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Board board = new Board();
-        for (int i = 0; i < board.getBoard().length; i++) {
-            for (int j = 0; j < board.getBoard()[0].length; j++) {
-                System.out.print(board.getBoard()[i][j] + " ");
+        Board board;
         boolean whiteToMove = true;
+        Position from;
+        Position to;
 
-        whiteArmy.put(convertSquareToArray("e5"), "king");
-        whiteArmy.put(convertSquareToArray("d4"), "pawn");
-        blackArmy.put(convertSquareToArray("e8"), "king");
-        blackArmy.put(convertSquareToArray("d6"), "knight");
-        blackArmy.put(convertSquareToArray("f5"), "bishop");
-        blackArmy.put(convertSquareToArray("f4"), "rook");
-        blackArmy.put(convertSquareToArray("a1"), "rook");
-        blackArmy.put(convertSquareToArray("c4"), "queen");
-        Board customBoard = new Board(whiteArmy, blackArmy);
-        for (int i = 0; i < customBoard.getBoard().length; i++) {
-            for (int j = 0; j < customBoard.getBoard()[0].length; j++) {
-                System.out.print(customBoard.getBoard()[i][j] + " ");
-            }
-            System.out.println();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Choose: Start / Custom ");
+        String playStart = scanner.next();
+
         HashMap<Position, String> whiteArmy = new HashMap<>();
         HashMap<Position, String> blackArmy = new HashMap<>();
+        if (playStart.equalsIgnoreCase("start")) {
+            board = new Board();
+        } else {
+            board = new Board(whiteArmy, blackArmy);
+            whiteArmy.put(convertSquareToArray("b5"), "pawn");
+            whiteArmy.put(convertSquareToArray("e4"), "pawn");
+            whiteArmy.put(convertSquareToArray("h4"), "pawn");
+            whiteArmy.put(convertSquareToArray("e1"), "king");
+            blackArmy.put(convertSquareToArray("a7"), "pawn");
+            blackArmy.put(convertSquareToArray("d7"), "pawn");
+            blackArmy.put(convertSquareToArray("g7"), "pawn");
+            blackArmy.put(convertSquareToArray("e8"), "king");
         }
 
 // READING IN USER INPUT

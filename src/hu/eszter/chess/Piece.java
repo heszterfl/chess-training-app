@@ -10,7 +10,7 @@ public abstract class Piece {
     public String color;
 
     public Piece(String color) {
-        System.out.println("Piece constructor --> ");
+//        System.out.println("Piece constructor --> ");
         this.color = color;
     }
 

@@ -105,10 +105,8 @@ public class King extends Piece {
             if (p == null) {
                 currentX--;
             } else if (currentX == x - 1 && !((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -122,10 +120,8 @@ public class King extends Piece {
             if (p == null) {
                 currentX++;
             } else if (currentX == x + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -139,10 +135,8 @@ public class King extends Piece {
             if (p == null) {
                 currentY--;
             } else if (currentY == y + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -156,10 +150,8 @@ public class King extends Piece {
             if (p == null) {
                 currentY++;
             } else if (currentY == y + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -177,10 +169,8 @@ public class King extends Piece {
                 continue;
             }
             if (currentX == x - 1 && currentY == y - 1 && this.color.equals("white") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -198,10 +188,8 @@ public class King extends Piece {
                 continue;
             }
             if (currentX == x + 1 && currentY == y + 1 && this.color.equals("black") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -219,10 +207,8 @@ public class King extends Piece {
                 continue;
             }
             if (currentX == x - 1 && currentY == y + 1 && this.color.equals("white") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -240,10 +226,8 @@ public class King extends Piece {
                 continue;
             }
             if (currentX == x + 1 && currentY == y - 1 && this.color.equals("black") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
-                System.out.println("isProtected() --> true");
                 return true;
             } else {
                 break;
@@ -271,13 +255,10 @@ public class King extends Piece {
                     continue;
                 }
                 if (!p.color.equals(this.color) && p instanceof Knight) {
-                    System.out.println("isProtected() --> true");
                     return true;
                 }
             }
         }
-        System.out.println("isProtected() --> false");
         return false;
     }
-
 }

@@ -31,4 +31,8 @@ public abstract class Piece {
     public void setCurrentPosition(Position position) {
         this.currentPosition = position;
     }
+
+    public String getColor() {
+        return color;
+    }
 }

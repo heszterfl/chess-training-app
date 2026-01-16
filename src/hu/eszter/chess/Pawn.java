@@ -5,6 +5,10 @@ import java.util.List;
 
 public class Pawn extends Piece {
 
+    public Pawn(String color) {
+        super(color);
+    }
+
     public Pawn(String color, int column) {
         super(color);
         if (color.equals("white")) {

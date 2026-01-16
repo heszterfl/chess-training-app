@@ -5,6 +5,10 @@ import java.util.List;
 
 public class Rook extends Piece {
 
+    public Rook(String color) {
+        super(color);
+    }
+
     public Rook(String color, String side) {
         super(color);
         if (side.equals("queen") && color.equals("white")) {

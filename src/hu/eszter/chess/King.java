@@ -258,7 +258,15 @@ public class King extends Piece {
                 if (Math.abs(v) == Math.abs(w)) {
                     continue;
                 }
-                Piece p = board[x + v][y + w];
+                int targetRow = x + v;
+                int targetCol = y + w;
+                Piece p;
+                if (targetRow >= 0 && targetRow <= 7 && targetCol >= 0 && targetCol <= 7) {
+                    p = board[x + v][y + w];
+                } else {
+                    continue;
+                }
+
                 if (p == null) {
                     continue;
                 }

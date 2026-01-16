@@ -5,6 +5,10 @@ import java.util.List;
 
 public class Knight extends Piece {
 
+    public Knight(String color) {
+        super(color);
+    }
+
     public Knight(String color, String side) {
         super(color);
         if (side.equals("queen") && color.equals("white")) {

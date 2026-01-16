@@ -138,6 +138,24 @@ public class Board {
         }
     }
 
+    public String convertSquareToString(Position position) {
+        int x = 8 - position.row();
+        int y = position.col();
+        String posX = Integer.toString(x);
+        String posY = switch (y) {
+            case 0 -> "a";
+            case 1 -> "b";
+            case 2 -> "c";
+            case 3 -> "d";
+            case 4 -> "e";
+            case 5 -> "f";
+            case 6 -> "g";
+            case 7 -> "h";
+            default -> "invalid";
+        };
+        return posY + posX;
+    }
+
     public Piece[][] getBoard() {
         return board;
     }

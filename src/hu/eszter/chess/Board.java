@@ -87,6 +87,57 @@ public class Board {
         initializeBoard();
     }
 
+    public Board(HashMap<Position, String> white, HashMap<Position, String> black) {
+
+        board = new Piece[8][8];
+
+        Set<Map.Entry<Position, String>> entryWhite = white.entrySet();
+        for (Map.Entry<Position, String> e : entryWhite) {
+            Position k = e.getKey();
+            String v = e.getValue();
+            Piece p = switch (v) {
+                case "king" -> new King("white");
+                case "queen" -> new Queen("white");
+                case "bishop" -> new Bishop("white");
+                case "knight" -> new Knight("white");
+                case "rook" -> new Rook("white");
+                case "pawn" -> new Pawn("white");
+                default -> null;
+            };
+            if (p instanceof King) {
+                whiteKingPosition = k;
+            }
+            p.setCurrentPosition(k);
+            int x = k.row();
+            int y = k.col();
+            board[x][y] = p;
+        }
+
+        Set<Map.Entry<Position, String>> entryBlack = black.entrySet();
+        for (Map.Entry<Position, String> e : entryBlack) {
+            Position k = e.getKey();
+            String v = e.getValue();
+            Piece p = switch (v) {
+                case "king" -> new King("black");
+                case "queen" -> new Queen("black");
+                case "bishop" -> new Bishop("black");
+                case "knight" -> new Knight("black");
+                case "rook" -> new Rook("black");
+                case "pawn" -> new Pawn("black");
+                default -> null;
+            };
+
+            if (p instanceof King) {
+                blackKingPosition = k;
+            }
+            p.setCurrentPosition(k);
+
+            int x = k.row();
+            int y = k.col();
+            board[x][y] = p;
+        }
+    }
+
     public Piece[][] getBoard() {
         return board;
     }

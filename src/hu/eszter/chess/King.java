@@ -90,7 +90,7 @@ public class King extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WhiteKing" : "BlackKing";
+        return this.color.equals("white") ? "WK" : "BK";
     }
 
     public boolean isProtected(Piece[][] board, Position square) {

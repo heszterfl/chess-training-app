@@ -84,7 +84,7 @@ public class Knight extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WhiteKnight" : "BlackKnight";
+        return this.color.equals("white") ? "WN" : "BN";
     }
 
 }

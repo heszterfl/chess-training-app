@@ -109,7 +109,7 @@ public class Pawn extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WhitePawn" : "BlackPawn";
+        return this.color.equals("white") ? "wp" : "bp";
     }
 
     @Override

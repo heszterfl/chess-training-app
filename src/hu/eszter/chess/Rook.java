@@ -148,7 +148,7 @@ public class Rook extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WhiteRook" : "BlackRook";
+        return this.color.equals("white") ? "WR" : "BR";
     }
 
 }

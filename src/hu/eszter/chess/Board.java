@@ -393,6 +393,10 @@ public class Board {
         return lastMove;
     }
 
+    public void setLastMove(Move move) {
+        this.lastMove = move;
+    }
+
     public boolean isWhiteToMove() {
         return whiteToMove;
     }

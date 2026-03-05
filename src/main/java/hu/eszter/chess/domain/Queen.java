@@ -1,28 +1,13 @@
-package hu.eszter.chess;
+package hu.eszter.chess.domain;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bishop extends Piece {
+public class Queen extends Piece {
 
-    public Bishop(String color) {
+    public Queen(String color) {
         super(color);
-    }
-
-    public Bishop(String color, String side) {
-        super(color);
-        if (side.equals("queen") && color.equals("white")) {
-            this.startingPosition = new Position(7, 2);
-        }
-        if (side.equals("king") && color.equals("white")) {
-            this.startingPosition = new Position(7, 5);
-        }
-        if (side.equals("queen") && color.equals("black")) {
-            this.startingPosition = new Position(0, 2);
-        }
-        if (side.equals("king") && color.equals("black")) {
-            this.startingPosition = new Position(0, 5);
-        }
+        this.startingPosition = color.equals("white") ? new Position(7, 3) : new Position(0, 3);
         this.currentPosition = startingPosition;
     }
 
@@ -33,10 +18,39 @@ public class Bishop extends Piece {
         int x = position.row();
         int y = position.col();
 
+        // Up
+        int currentX = x - 1;
+        while (currentX >= 0 && board[currentX][y] == null) {
+            moves.add(new Position(currentX,y));
+            currentX--;
+        }
+
+        // Down
+        currentX = x + 1;
+        while (currentX < board.length && board[currentX][y] == null) {
+            moves.add(new Position(currentX, y));
+            currentX++;
+        }
+
+        // Left
+        int currentY = y - 1;
+        while (currentY >= 0 && board[x][currentY] == null) {
+            moves.add(new Position(x, currentY));
+            currentY--;
+        }
+
+        // Right
+        currentY = y + 1;
+        while (currentY < board[0].length && board[x][currentY] == null) {
+            moves.add(new Position(x, currentY));
+            currentY++;
+        }
+
         // Up-left
-        int currentX = x-1;
-        int currentY = y-1;
-        while (currentX >= 0 && currentY >= 0 && board[currentX][currentY] == null) {
+        currentX = x-1;
+        currentY = y-1;
+        while (currentX >= 0 && currentY >= 0 &&
+                board[currentX][currentY] == null) {
             moves.add(new Position(currentX, currentY));
             currentX--;
             currentY--;
@@ -45,7 +59,8 @@ public class Bishop extends Piece {
         // Down-right
         currentX = x + 1;
         currentY = y + 1;
-        while (currentX < board.length && currentY < board[0].length && board[currentX][currentY] == null) {
+        while (currentX < board.length && currentY < board[0].length &&
+                board[currentX][currentY] == null) {
             moves.add(new Position(currentX, currentY));
             currentX++;
             currentY++;
@@ -54,7 +69,8 @@ public class Bishop extends Piece {
         // Up-right
         currentX = x - 1;
         currentY = y + 1;
-        while (currentX >= 0 && currentY < board[0].length && board[currentX][currentY] == null) {
+        while (currentX >= 0 && currentY < board[0].length &&
+                board[currentX][currentY] == null) {
             moves.add(new Position(currentX, currentY));
             currentX--;
             currentY++;
@@ -63,7 +79,8 @@ public class Bishop extends Piece {
         // Down-left
         currentX = x + 1;
         currentY = y - 1;
-        while (currentX < board.length && currentY >= 0 && board[currentX][currentY] == null) {
+        while (currentX < board.length && currentY >= 0 &&
+                board[currentX][currentY] == null) {
             moves.add(new Position(currentX, currentY));
             currentX++;
             currentY--;
@@ -81,7 +98,8 @@ public class Bishop extends Piece {
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
-                if (Math.abs(x - i) == Math.abs(y - j) && !(x == i && y == j)) {
+                if ((Math.abs(x - i) == Math.abs(y - j) && !(x == i && y == j))
+                        || ((i == x) ^ (j == y))) {
                     moves.add(new Position(i,j));
                 }
             }
@@ -96,9 +114,65 @@ public class Bishop extends Piece {
         int x = position.row();
         int y = position.col();
 
+        // Up
+        int currentX = x - 1;
+        while (currentX >= 0) {
+            Piece p = board[currentX][y];
+            if (p == null) {
+                currentX--;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new Position(currentX,y));
+            }
+            break;
+        }
+
+        // Down
+        currentX = x + 1;
+        while (currentX < board.length) {
+            Piece p = board[currentX][y];
+            if (p == null) {
+                currentX++;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new Position(currentX, y));
+            }
+            break;
+        }
+
+        // Left
+        int currentY = y - 1;
+        while (currentY >= 0) {
+            Piece p = board[x][currentY];
+            if (p == null) {
+                currentY--;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new Position(x, currentY));
+            }
+            break;
+        }
+
+        // Right
+        currentY = y + 1;
+        while (currentY < board[0].length) {
+            Piece p = board[x][currentY];
+            if (p == null) {
+                currentY++;
+                continue;
+            }
+            if (!(p.color).equals(this.color)) {
+                moves.add(new Position(x, currentY));
+            }
+            break;
+        }
+
         // Up-left
-        int currentX = x-1;
-        int currentY = y-1;
+        currentX = x-1;
+        currentY = y-1;
         while (currentX >= 0 && currentY >= 0) {
             Piece p = board[currentX][currentY];
             if (p == null) {
@@ -149,7 +223,7 @@ public class Bishop extends Piece {
         currentY = y - 1;
         while (currentX < board.length && currentY >= 0) {
             Piece p = board[currentX][currentY];
-            if (p == null) {
+            if ( p == null) {
                 currentX++;
                 currentY--;
                 continue;
@@ -165,7 +239,7 @@ public class Bishop extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WB" : "BB";
+        return this.color.equals("white") ? "WQ" : "BQ";
     }
 
 }

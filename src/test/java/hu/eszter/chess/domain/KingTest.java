@@ -1,4 +1,4 @@
-package hu.eszter.chess;
+package hu.eszter.chess.domain;
 
 import org.junit.jupiter.api.Test;
 

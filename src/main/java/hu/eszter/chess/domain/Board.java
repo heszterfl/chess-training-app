@@ -1,4 +1,4 @@
-package hu.eszter.chess;
+package hu.eszter.chess.domain;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public class Board {
     Position blackKingPosition;
     Position kingPosition = isWhiteToMove() ? whiteKingPosition : blackKingPosition;
     boolean whiteToMove = true;
-    boolean isCheckMate = false;
+    public boolean isCheckMate = false;
 
 
     public Board() {

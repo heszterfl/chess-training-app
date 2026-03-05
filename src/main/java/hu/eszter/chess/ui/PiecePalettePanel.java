@@ -1,6 +1,6 @@
 package hu.eszter.chess.ui;
 
-import hu.eszter.chess.PieceKind;
+import hu.eszter.chess.domain.PieceKind;
 
 import javax.swing.*;
 import java.awt.*;

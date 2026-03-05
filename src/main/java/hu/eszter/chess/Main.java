@@ -1,5 +1,8 @@
 package hu.eszter.chess;
 
+import hu.eszter.chess.domain.Board;
+import hu.eszter.chess.domain.Position;
+
 import java.util.*;
 
 public class Main {

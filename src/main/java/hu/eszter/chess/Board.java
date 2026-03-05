@@ -4,7 +4,8 @@ import java.util.*;
 
 public class Board {
 
-    public static Piece[][] board;
+    private final Piece[][] squares;
+
     List<Piece> whiteArmy;
     List<Piece> blackArmy;
     private List<Piece> removed = new ArrayList<>();
@@ -19,7 +20,7 @@ public class Board {
 
 
     public Board() {
-        board = new Piece[8][8];
+        this.squares = new Piece[8][8];
 
         Piece whiteKing = new King("white");
         Piece blackKing = new King("black");
@@ -64,16 +65,16 @@ public class Board {
         blackArmy.add(blackKnightK);
         blackArmy.add(blackKnightQ);
 
-        for (int i = 0; i < board.length; i++) {
+        for (int i = 0; i < squares.length; i++) {
             Piece pawn = new Pawn("black", i);
-            board[1][i] = pawn;
+            squares[1][i] = pawn;
             pawn.startingPosition = new Position(1, i);
             blackArmy.add(pawn);
         }
 
-        for (int i = 0; i < board.length; i++) {
+        for (int i = 0; i < squares.length; i++) {
             Piece pawn = new Pawn("white", i);
-            board[6][i] = pawn;
+            squares[6][i] = pawn;
             pawn.startingPosition = new Position(6, i);
             whiteArmy.add(pawn);
         }
@@ -85,8 +86,7 @@ public class Board {
     }
 
     public Board(HashMap<Position, String> white, HashMap<Position, String> black) {
-
-        board = new Piece[8][8];
+        this.squares = new Piece[8][8];
 
         Set<Map.Entry<Position, String>> entryWhite = white.entrySet();
         for (Map.Entry<Position, String> e : entryWhite) {
@@ -107,7 +107,7 @@ public class Board {
             p.setCurrentPosition(k);
             int x = k.row();
             int y = k.col();
-            board[x][y] = p;
+            squares[x][y] = p;
         }
 
         Set<Map.Entry<Position, String>> entryBlack = black.entrySet();
@@ -131,7 +131,7 @@ public class Board {
 
             int x = k.row();
             int y = k.col();
-            board[x][y] = p;
+            squares[x][y] = p;
         }
     }
 
@@ -154,14 +154,14 @@ public class Board {
     }
 
     public Piece[][] getBoard() {
-        return board;
+        return squares;
     }
 
     public Piece getPieceAt(Piece[][] board, Position position) {
         if (board[position.row()][position.col()] == null) {
             return null;
         }
-        return board[position.row()][position.col()];
+        return squares[position.row()][position.col()];
     }
 
     public void applyMove(Piece piece, Position currentPosition, Position newPos) {
@@ -177,8 +177,8 @@ public class Board {
         }
 
         piece.setCurrentPosition(newPos);
-        board[newX][newY] = piece;
-        board[currentX][currentY] = null;
+        squares[newX][newY] = piece;
+        squares[currentX][currentY] = null;
 
         lastMove = new Move(piece, piece.getColor(), currentPosition, newPos);
         pastMoves.add(lastMove);
@@ -195,7 +195,7 @@ public class Board {
 
         if (!inbounds(currentPos) || !inbounds(newPos)) return false;
 
-        Piece piece = getPieceAt(board, currentPos);
+        Piece piece = getPieceAt(squares, currentPos);
         if (piece == null) {
             return false;
         }
@@ -205,21 +205,21 @@ public class Board {
         }
 
         if (isKingInCheck(lastMove.piece())) {
-            if (piece instanceof King && (piece.getLegalMoves(board, piece.getCurrentPosition()).contains(newPos) ||
-                    piece.getLegalCaptures(board, piece.getCurrentPosition()).contains(newPos))) {
+            if (piece instanceof King && (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) ||
+                    piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(newPos))) {
                 applyMove(piece, currentPos, newPos);
                 return true;
-            } else if (!(piece instanceof King) && piece.getLegalCaptures(board, piece.getCurrentPosition()).contains(lastMove.to())) {
+            } else if (!(piece instanceof King) && piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(lastMove.to())) {
                 applyMove(piece, currentPos, newPos);
                 return true;
-            } else if (piece.getLegalMoves(board, piece.getCurrentPosition()).contains(newPos) &&
+            } else if (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) &&
                     getSquaresBetween(lastMove.to(), kingPosition).contains(newPos)) {
                 applyMove(piece, currentPos, newPos);
                 return true;
             }
         }
 
-        boolean targetEmpty = getPieceAt(board, newPos) == null;
+        boolean targetEmpty = getPieceAt(squares, newPos) == null;
 
         if (targetEmpty) {
             if (piece instanceof Pawn pawn) {
@@ -230,7 +230,7 @@ public class Board {
                 }
             }
 
-            if (!piece.getLegalMoves(board, currentPos).contains(newPos)) {
+            if (!piece.getLegalMoves(squares, currentPos).contains(newPos)) {
                 return false;
             }
 
@@ -243,11 +243,11 @@ public class Board {
             applyMove(piece, currentPos, newPos);
             return true;
         } else {
-            if (!piece.getLegalCaptures(board, currentPos).contains(newPos)) {
+            if (!piece.getLegalCaptures(squares, currentPos).contains(newPos)) {
                 return false;
             }
 
-            Piece toRemove = getPieceAt(board, newPos);
+            Piece toRemove = getPieceAt(squares, newPos);
             if (toRemove != null) {
                 removed.add(toRemove);
                 toRemove.setCurrentPosition(null);
@@ -351,13 +351,13 @@ public class Board {
 
     public boolean isKingInCheck(Piece attackingPiece) {
         if (attackingPiece.getColor().equals("white")) {
-            if (attackingPiece.getLegalCaptures(board, attackingPiece.getCurrentPosition()).contains(blackKingPosition)) {
+            if (attackingPiece.getLegalCaptures(squares, attackingPiece.getCurrentPosition()).contains(blackKingPosition)) {
                 kingInCheck = true;
                 System.out.println("Black king in check");
                 return true;
             }
         } else if (attackingPiece.getColor().equals("black")) {
-            if (attackingPiece.getLegalCaptures(board, attackingPiece.getCurrentPosition()).contains(whiteKingPosition)) {
+            if (attackingPiece.getLegalCaptures(squares, attackingPiece.getCurrentPosition()).contains(whiteKingPosition)) {
                 kingInCheck = true;
                 System.out.println("White king in check");
                 return true;
@@ -369,9 +369,9 @@ public class Board {
     public boolean isCheckmated(Position kingPos) {
         List<Position> legalCaptures = new ArrayList<>();
         boolean legalCaptureFound = false;
-        List<Piece> army = isWhiteToMove() ? getWhiteArmy(board) : getBlackArmy(board);
+        List<Piece> army = isWhiteToMove() ? getWhiteArmy(squares) : getBlackArmy(squares);
         for (Piece p : army) {
-            legalCaptures = p.getLegalCaptures(board, p.getCurrentPosition());
+            legalCaptures = p.getLegalCaptures(squares, p.getCurrentPosition());
             if (!legalCaptures.isEmpty()) {
                 legalCaptureFound = true;
                 break;
@@ -383,7 +383,7 @@ public class Board {
         List<Position> squaresBetween = getSquaresBetween(lastMove.to(), kingPos);
         for (Piece p : army) {
             for (Position pos : squaresBetween) {
-                legalMoves = p.getLegalMoves(board, p.getCurrentPosition());
+                legalMoves = p.getLegalMoves(squares, p.getCurrentPosition());
                 if (legalMoves.contains(pos)) {
                     blockingFound = true;
                     break;
@@ -391,10 +391,10 @@ public class Board {
             }
         }
 
-        Piece king = getPieceAt(board, kingPos);
+        Piece king = getPieceAt(squares, kingPos);
         if (isKingInCheck(lastMove.piece())) {
-            if (king.getLegalMoves(board, king.getCurrentPosition()).isEmpty() &&
-                    king.getLegalCaptures(board, king.getCurrentPosition()).isEmpty() &&
+            if (king.getLegalMoves(squares, king.getCurrentPosition()).isEmpty() &&
+                    king.getLegalCaptures(squares, king.getCurrentPosition()).isEmpty() &&
                     legalCaptures.isEmpty() &&
                     !legalCaptureFound &&
                     !blockingFound) {
@@ -440,7 +440,7 @@ public class Board {
 
         Piece toRemove = getPieceAt(this.getBoard(), new Position(currentPos.row(), newPos.col()));
         removed.add(toRemove);
-        board[currentPos.row()][newPos.col()] = null;
+        squares[currentPos.row()][newPos.col()] = null;
 
         applyMove(pawn, currentPos, newPos);
 
@@ -450,12 +450,12 @@ public class Board {
     public void initializeBoard() {
         for (Piece p : whiteArmy) {
             int[] pos = p.getStartingPosition();
-            board[pos[0]][pos[1]] = p;
+            squares[pos[0]][pos[1]] = p;
             p.currentPosition = p.startingPosition;
         }
         for (Piece p : blackArmy) {
             int[] pos = p.getStartingPosition();
-            board[pos[0]][pos[1]] = p;
+            squares[pos[0]][pos[1]] = p;
             p.currentPosition = p.startingPosition;
         }
     }
@@ -478,8 +478,8 @@ public class Board {
 
     public void printBoard() {
         System.out.println("Current board: ");
-        for (Piece[] pieces : board) {
-            for (int j = 0; j < board[0].length; j++) {
+        for (Piece[] pieces : squares) {
+            for (int j = 0; j < squares[0].length; j++) {
                 System.out.print(pieces[j] + " ");
             }
             System.out.println();

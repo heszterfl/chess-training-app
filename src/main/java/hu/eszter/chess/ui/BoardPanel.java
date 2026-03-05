@@ -1,16 +1,15 @@
 package hu.eszter.chess.ui;
 
-import hu.eszter.chess.domain.Board;
-import hu.eszter.chess.domain.Piece;
-import hu.eszter.chess.domain.PieceFactory;
-import hu.eszter.chess.domain.Position;
+import hu.eszter.chess.app.GameService;
+import hu.eszter.chess.domain.*;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class BoardPanel extends JPanel {
 
-    private final Board board;
+    private final GameService gameService;
+    private Board board;
     private final JButton[][] buttons = new JButton[8][8];
     private final JTextArea moveLogArea;
 
@@ -24,8 +23,9 @@ public class BoardPanel extends JPanel {
 
     private PaletteSelection selectedPalettePiece;
 
-    public BoardPanel(Board board, JTextArea moveLogArea, boolean setupMode) {
-        this.board = board;
+    public BoardPanel(GameService gameService, JTextArea moveLogArea, boolean setupMode) {
+        this.gameService = gameService;
+        this.board = gameService.getBoard();
         this.moveLogArea = moveLogArea;
         this.setupMode = setupMode;
 
@@ -112,7 +112,7 @@ public class BoardPanel extends JPanel {
             Position from = new Position(selectedSquare.row(), selectedSquare.col());
             Position to = new Position(row, col);
 
-            boolean moved = board.tryMove(from, to);
+            boolean moved = gameService.tryMove(from, to);
             if (moved) {
                 logMove(from, to);
                 selectedSquare = null;

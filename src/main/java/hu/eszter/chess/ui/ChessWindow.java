@@ -1,6 +1,6 @@
 package hu.eszter.chess.ui;
 
-import hu.eszter.chess.domain.Board;
+import hu.eszter.chess.app.GameService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ public class ChessWindow extends JFrame {
     private final BoardPanel boardPanel;
 
     public ChessWindow(boolean customSetup) {
-        Board board = new Board();
+        GameService gameService = new GameService();
 
         setTitle("Chess Training App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,7 +20,7 @@ public class ChessWindow extends JFrame {
         moveLogArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(moveLogArea);
 
-        boardPanel = new BoardPanel(board, moveLogArea, customSetup);
+        boardPanel = new BoardPanel(gameService, moveLogArea, customSetup);
 
         PiecePalettePanel palettePanel = new PiecePalettePanel(
                 boardPanel::setSelectedPalettePiece

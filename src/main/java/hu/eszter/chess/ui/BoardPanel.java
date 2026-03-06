@@ -2,6 +2,7 @@ package hu.eszter.chess.ui;
 
 import hu.eszter.chess.app.GameService;
 import hu.eszter.chess.domain.*;
+import hu.eszter.chess.domain.PieceColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,10 +101,10 @@ public class BoardPanel extends JPanel {
                 return;
             }
 
-            if (board.isWhiteToMove() && piece.getColor().equalsIgnoreCase("white")) {
+            if (board.isWhiteToMove() && piece.getColor() == PieceColor.WHITE) {
                 selectedSquare = new Position(row, col);
                 highlightSelectedSquare();
-            } else if (!board.isWhiteToMove() && piece.getColor().equalsIgnoreCase("black")) {
+            } else if (!board.isWhiteToMove() && piece.getColor() == PieceColor.BLACK) {
                 selectedSquare = new Position(row, col);
                 highlightSelectedSquare();
             }

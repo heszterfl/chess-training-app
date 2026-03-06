@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Queen extends Piece {
 
-    public Queen(String color) {
+    public Queen(PieceColor color) {
         super(color);
-        this.startingPosition = color.equals("white") ? new Position(7, 3) : new Position(0, 3);
+        this.startingPosition = color == PieceColor.WHITE ? new Position(7, 3) : new Position(0, 3);
         this.currentPosition = startingPosition;
     }
 
@@ -122,7 +122,7 @@ public class Queen extends Piece {
                 currentX--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX,y));
             }
             break;
@@ -136,7 +136,7 @@ public class Queen extends Piece {
                 currentX++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, y));
             }
             break;
@@ -150,7 +150,7 @@ public class Queen extends Piece {
                 currentY--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(x, currentY));
             }
             break;
@@ -164,7 +164,7 @@ public class Queen extends Piece {
                 currentY++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(x, currentY));
             }
             break;
@@ -180,7 +180,7 @@ public class Queen extends Piece {
                 currentY--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -196,7 +196,7 @@ public class Queen extends Piece {
                 currentY++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -212,7 +212,7 @@ public class Queen extends Piece {
                 currentY++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -228,7 +228,7 @@ public class Queen extends Piece {
                 currentY--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -239,7 +239,7 @@ public class Queen extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WQ" : "BQ";
+        return this.getColor() == PieceColor.WHITE ? "WQ" : "BQ";
     }
 
 }

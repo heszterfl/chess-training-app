@@ -5,22 +5,22 @@ import java.util.List;
 
 public class Knight extends Piece {
 
-    public Knight(String color) {
+    public Knight(PieceColor color) {
         super(color);
     }
 
-    public Knight(String color, String side) {
+    public Knight(PieceColor color, String side) {
         super(color);
-        if (side.equals("queen") && color.equals("white")) {
+        if (side.equals("queen") && color == PieceColor.WHITE) {
             this.startingPosition = new Position(7, 1);
         }
-        if (side.equals("king") && color.equals("white")) {
+        if (side.equals("king") && color == PieceColor.WHITE) {
             this.startingPosition = new Position(7, 6);
         }
-        if (side.equals("queen") && color.equals("black")) {
+        if (side.equals("queen") && color == PieceColor.BLACK) {
             this.startingPosition = new Position(0, 1);
         }
-        if (side.equals("king") && color.equals("black")) {
+        if (side.equals("king") && color == PieceColor.BLACK) {
             this.startingPosition = new Position(0, 6);
         }
         this.currentPosition = startingPosition;
@@ -74,7 +74,7 @@ public class Knight extends Piece {
             for (int j = 0; j < board[0].length; j++) {
                 if (((Math.abs(x-i) == 1 && Math.abs(y-j) == 2) ||
                         (Math.abs(x-i) == 2 && Math.abs(y-j) == 1)) &&
-                        (board[i][j] != null) && !(board[i][j].color).equals(this.color)) {     // *****
+                        (board[i][j] != null) && !(board[i][j].getColor()).equals(this.getColor())) {     // *****
                     moves.add(new Position(i,j));
                 }
             }
@@ -84,7 +84,7 @@ public class Knight extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WN" : "BN";
+        return this.getColor() == PieceColor.WHITE ? "WN" : "BN";
     }
 
 }

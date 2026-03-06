@@ -22,28 +22,28 @@ public class Board {
     public Board() {
         this.squares = new Piece[8][8];
 
-        Piece whiteKing = new King("white");
-        Piece blackKing = new King("black");
-        Piece whiteQueen = new Queen("white");
-        Piece blackQueen = new Queen("black");
+        Piece whiteKing = new King(PieceColor.WHITE);
+        Piece blackKing = new King(PieceColor.BLACK);
+        Piece whiteQueen = new Queen(PieceColor.WHITE);
+        Piece blackQueen = new Queen(PieceColor.BLACK);
 
-        Piece whiteRookQ = new Rook("white", "queen");
-        Piece whiteRookK = new Rook("white", "king");
+        Piece whiteRookQ = new Rook(PieceColor.WHITE, "queen");
+        Piece whiteRookK = new Rook(PieceColor.WHITE, "king");
 
-        Piece blackRookQ = new Rook("black", "queen");
-        Piece blackRookK = new Rook("black", "king");
+        Piece blackRookQ = new Rook(PieceColor.BLACK, "queen");
+        Piece blackRookK = new Rook(PieceColor.BLACK, "king");
 
-        Piece whiteKnightQ = new Knight("white", "queen");
-        Piece whiteKnightK = new Knight("white", "king");
+        Piece whiteKnightQ = new Knight(PieceColor.WHITE, "queen");
+        Piece whiteKnightK = new Knight(PieceColor.WHITE, "king");
 
-        Piece blackKnightQ = new Knight("black", "queen");
-        Piece blackKnightK = new Knight("black", "king");
+        Piece blackKnightQ = new Knight(PieceColor.BLACK, "queen");
+        Piece blackKnightK = new Knight(PieceColor.BLACK, "king");
 
-        Piece whiteBishopQ = new Bishop("white", "queen");
-        Piece whiteBishopK = new Bishop("white", "king");
+        Piece whiteBishopQ = new Bishop(PieceColor.WHITE, "queen");
+        Piece whiteBishopK = new Bishop(PieceColor.WHITE, "king");
 
-        Piece blackBishopQ = new Bishop("black", "queen");
-        Piece blackBishopK = new Bishop("black", "king");
+        Piece blackBishopQ = new Bishop(PieceColor.BLACK, "queen");
+        Piece blackBishopK = new Bishop(PieceColor.BLACK, "king");
 
         whiteArmy = new ArrayList<>();
         whiteArmy.add(whiteQueen);
@@ -66,14 +66,14 @@ public class Board {
         blackArmy.add(blackKnightQ);
 
         for (int i = 0; i < squares.length; i++) {
-            Piece pawn = new Pawn("black", i);
+            Piece pawn = new Pawn(PieceColor.BLACK, i);
             squares[1][i] = pawn;
             pawn.startingPosition = new Position(1, i);
             blackArmy.add(pawn);
         }
 
         for (int i = 0; i < squares.length; i++) {
-            Piece pawn = new Pawn("white", i);
+            Piece pawn = new Pawn(PieceColor.WHITE, i);
             squares[6][i] = pawn;
             pawn.startingPosition = new Position(6, i);
             whiteArmy.add(pawn);
@@ -93,12 +93,12 @@ public class Board {
             Position k = e.getKey();
             String v = e.getValue();
             Piece p = switch (v) {
-                case "king" -> new King("white");
-                case "queen" -> new Queen("white");
-                case "bishop" -> new Bishop("white");
-                case "knight" -> new Knight("white");
-                case "rook" -> new Rook("white");
-                case "pawn" -> new Pawn("white");
+                case "king" -> new King(PieceColor.WHITE);
+                case "queen" -> new Queen(PieceColor.WHITE);
+                case "bishop" -> new Bishop(PieceColor.WHITE);
+                case "knight" -> new Knight(PieceColor.WHITE);
+                case "rook" -> new Rook(PieceColor.WHITE);
+                case "pawn" -> new Pawn(PieceColor.WHITE);
                 default -> null;
             };
             if (p instanceof King) {
@@ -115,12 +115,12 @@ public class Board {
             Position k = e.getKey();
             String v = e.getValue();
             Piece p = switch (v) {
-                case "king" -> new King("black");
-                case "queen" -> new Queen("black");
-                case "bishop" -> new Bishop("black");
-                case "knight" -> new Knight("black");
-                case "rook" -> new Rook("black");
-                case "pawn" -> new Pawn("black");
+                case "king" -> new King(PieceColor.BLACK);
+                case "queen" -> new Queen(PieceColor.BLACK);
+                case "bishop" -> new Bishop(PieceColor.BLACK);
+                case "knight" -> new Knight(PieceColor.BLACK);
+                case "rook" -> new Rook(PieceColor.BLACK);
+                case "pawn" -> new Pawn(PieceColor.BLACK);
                 default -> null;
             };
 
@@ -170,9 +170,9 @@ public class Board {
         int newX = newPos.row();
         int newY = newPos.col();
 
-        if (piece instanceof King && piece.getColor().equals("white")) {
+        if (piece instanceof King && piece.getColor() == PieceColor.WHITE) {
             whiteKingPosition = newPos;
-        } else if (piece instanceof King && piece.getColor().equals("black")) {
+        } else if (piece instanceof King && piece.getColor() == PieceColor.BLACK) {
             blackKingPosition = newPos;
         }
 
@@ -235,7 +235,7 @@ public class Board {
             }
 
             if (isPromotionSquare(piece, newPos)) {
-                Piece newPiece = new Queen(piece.color);
+                Piece newPiece = new Queen(piece.getColor());
                 applyMove(newPiece, currentPos, newPos);
                 return true;
             }
@@ -255,7 +255,7 @@ public class Board {
 
 
             if (isPromotionSquare(piece, newPos)) {
-                Piece newPiece = new Queen(piece.color);
+                Piece newPiece = new Queen(piece.getColor());
                 applyMove(newPiece, currentPos, newPos);
                 return true;
             }
@@ -271,7 +271,7 @@ public class Board {
 
     private boolean isPromotionSquare(Piece piece, Position to) {
         return piece instanceof Pawn &&
-                ((piece.color.equals("white") && to.row() == 0) || (piece.color.equals("black") && to.row() == 7));
+                ((piece.getColor() == PieceColor.WHITE && to.row() == 0) || (piece.getColor() == PieceColor.BLACK && to.row() == 7));
     }
 
     private static Piece getPiece(Position newPos, Piece piece) {
@@ -280,10 +280,10 @@ public class Board {
         System.out.println("getPiece(): ");
         String input = scanner.next();
         Piece newPiece = switch (input) {
-            case "bishop" -> new Bishop(piece.color);
-            case "knight" -> new Knight(piece.color);
-            case "rook" -> new Rook(piece.color);
-            default -> new Queen(piece.color);
+            case "bishop" -> new Bishop(piece.getColor());
+            case "knight" -> new Knight(piece.getColor());
+            case "rook" -> new Rook(piece.getColor());
+            default -> new Queen(piece.getColor());
         };
 
         return newPiece;
@@ -350,13 +350,13 @@ public class Board {
     }
 
     public boolean isKingInCheck(Piece attackingPiece) {
-        if (attackingPiece.getColor().equals("white")) {
+        if (attackingPiece.getColor() == PieceColor.WHITE) {
             if (attackingPiece.getLegalCaptures(squares, attackingPiece.getCurrentPosition()).contains(blackKingPosition)) {
                 kingInCheck = true;
                 System.out.println("Black king in check");
                 return true;
             }
-        } else if (attackingPiece.getColor().equals("black")) {
+        } else if (attackingPiece.getColor() == PieceColor.BLACK) {
             if (attackingPiece.getLegalCaptures(squares, attackingPiece.getCurrentPosition()).contains(whiteKingPosition)) {
                 kingInCheck = true;
                 System.out.println("White king in check");
@@ -411,7 +411,7 @@ public class Board {
                 if (board[i][j] == null) {
                     continue;
                 }
-                if (board[i][j].getColor().equals("white")) {
+                if (board[i][j].getColor() == PieceColor.WHITE) {
                     Piece p = getPieceAt(board, new Position(i, j));
                     whiteArmy.add(p);
                 }
@@ -427,7 +427,7 @@ public class Board {
                 if (board[i][j] == null) {
                     continue;
                 }
-                if (board[i][j].getColor().equals("black")) {
+                if (board[i][j].getColor() == PieceColor.BLACK) {
                     Piece p = getPieceAt(board, new Position(i, j));
                     blackArmy.add(p);
                 }

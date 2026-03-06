@@ -5,9 +5,9 @@ import java.util.List;
 
 public class King extends Piece {
 
-    public King(String color) {
+    public King(PieceColor color) {
         super(color);
-        this.startingPosition = color.equals("white") ? new Position(7, 4) : new Position(0, 4);
+        this.startingPosition = color == PieceColor.WHITE ? new Position(7, 4) : new Position(0, 4);
         this.currentPosition = startingPosition;
     }
 
@@ -77,7 +77,7 @@ public class King extends Piece {
                 // Check if within board bounds
                 if (newRow >= 0 && newRow < board.length &&
                         newCol >= 0 && newCol < board[0].length && board[newRow][newCol] != null &&
-                        !(board[newRow][newCol].color).equals(this.color)) {
+                        !(board[newRow][newCol].getColor()).equals(this.getColor())) {
                     Position newSquare = new Position(newRow, newCol);
                     if (!isProtected(board, newSquare)) {
                         moves.add(new Position(newRow, newCol));
@@ -90,7 +90,7 @@ public class King extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WK" : "BK";
+        return this.getColor() == PieceColor.WHITE ? "WK" : "BK";
     }
 
     public boolean isProtected(Piece[][] board, Position square) {
@@ -104,9 +104,9 @@ public class King extends Piece {
             Piece p = board[currentX][y];
             if (p == null) {
                 currentX--;
-            } else if (currentX == x - 1 && !((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
+            } else if (currentX == x - 1 && !((p.getColor()).equals(this.getColor())) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 return true;
-            } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
+            } else if (!(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook)) {
                 return true;
             } else {
                 break;
@@ -119,9 +119,9 @@ public class King extends Piece {
             Piece p = board[currentX][y];
             if (p == null) {
                 currentX++;
-            } else if (currentX == x + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
+            } else if (currentX == x + 1 && !(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 return true;
-            } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
+            } else if (!(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook)) {
                 return true;
             } else {
                 break;
@@ -134,9 +134,9 @@ public class King extends Piece {
             Piece p = board[x][currentY];
             if (p == null) {
                 currentY--;
-            } else if (currentY == y + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
+            } else if (currentY == y + 1 && !(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 return true;
-            } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
+            } else if (!(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook)) {
                 return true;
             } else {
                 break;
@@ -149,9 +149,9 @@ public class King extends Piece {
             Piece p = board[x][currentY];
             if (p == null) {
                 currentY++;
-            } else if (currentY == y + 1 && !(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
+            } else if (currentY == y + 1 && !(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 return true;
-            } else if (!(p.color).equals(this.color) && (p instanceof Queen || p instanceof Rook)) {
+            } else if (!(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook)) {
                 return true;
             } else {
                 break;
@@ -168,9 +168,9 @@ public class King extends Piece {
                 currentY--;
                 continue;
             }
-            if (currentX == x - 1 && currentY == y - 1 && this.color.equals("white") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
+            if (currentX == x - 1 && currentY == y - 1 && this.getColor() == PieceColor.WHITE && !((p.getColor()).equals(this.getColor())) && (p instanceof Pawn)) {
                 return true;
-            } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
+            } else if (!((p.getColor()).equals(this.getColor())) && (p instanceof Queen || p instanceof Bishop)) {
                 return true;
             } else {
                 break;
@@ -187,9 +187,9 @@ public class King extends Piece {
                 currentY++;
                 continue;
             }
-            if (currentX == x + 1 && currentY == y + 1 && this.color.equals("black") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
+            if (currentX == x + 1 && currentY == y + 1 && this.getColor() == PieceColor.BLACK && !((p.getColor()).equals(this.getColor())) && (p instanceof Pawn)) {
                 return true;
-            } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
+            } else if (!((p.getColor()).equals(this.getColor())) && (p instanceof Queen || p instanceof Bishop)) {
                 return true;
             } else {
                 break;
@@ -206,9 +206,9 @@ public class King extends Piece {
                 currentY++;
                 continue;
             }
-            if (currentX == x - 1 && currentY == y + 1 && this.color.equals("white") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
+            if (currentX == x - 1 && currentY == y + 1 && this.getColor() == PieceColor.WHITE && !((p.getColor()).equals(this.getColor())) && (p instanceof Pawn)) {
                 return true;
-            } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
+            } else if (!((p.getColor()).equals(this.getColor())) && (p instanceof Queen || p instanceof Bishop)) {
                 return true;
             } else {
                 break;
@@ -225,9 +225,9 @@ public class King extends Piece {
                 currentY--;
                 continue;
             }
-            if (currentX == x + 1 && currentY == y - 1 && this.color.equals("black") && !((p.color).equals(this.color)) && (p instanceof Pawn)) {
+            if (currentX == x + 1 && currentY == y - 1 && this.getColor() == PieceColor.BLACK && !((p.getColor()).equals(this.getColor())) && (p instanceof Pawn)) {
                 return true;
-            } else if (!((p.color).equals(this.color)) && (p instanceof Queen || p instanceof Bishop)) {
+            } else if (!((p.getColor()).equals(this.getColor())) && (p instanceof Queen || p instanceof Bishop)) {
                 return true;
             } else {
                 break;
@@ -254,7 +254,7 @@ public class King extends Piece {
                 if (p == null) {
                     continue;
                 }
-                if (!p.color.equals(this.color) && p instanceof Knight) {
+                if (!p.getColor().equals(this.getColor()) && p instanceof Knight) {
                     return true;
                 }
             }

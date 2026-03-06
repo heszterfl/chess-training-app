@@ -1,6 +1,7 @@
 package hu.eszter.chess;
 
 import hu.eszter.chess.domain.Board;
+import hu.eszter.chess.domain.PieceColor;
 import hu.eszter.chess.domain.Position;
 
 import java.util.*;
@@ -92,10 +93,10 @@ public class Main {
             from = convertSquareToArray(start);
             to = convertSquareToArray(end);
 
-            if (board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).color.equals("white")) {
+            if (board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).getColor() == PieceColor.WHITE) {
                 board.tryMove(from, to);
 
-            } else if (!board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).color.equals("black")) {
+            } else if (!board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).getColor() == PieceColor.BLACK) {
                 board.tryMove(from, to);
             } else {
                 continue;

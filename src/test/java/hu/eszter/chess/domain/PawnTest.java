@@ -11,7 +11,7 @@ public class PawnTest {
     @Test
     void whitePawn_first_move_can_move_one_or_two_if_clear() {
         Board b = TestBoard.empty();
-        Pawn pawn = new Pawn("white", 4); // e-file
+        Pawn pawn = new Pawn(PieceColor.WHITE, 4); // e-file
         TestBoard.place(b, pawn, new Position(6, 4)); // e2
 
         List<Position> moves = pawn.getLegalMoves(b.getBoard(), pawn.getCurrentPosition());
@@ -23,10 +23,10 @@ public class PawnTest {
     @Test
     void whitePawn_first_move_blocked_cannot_move() {
         Board b = TestBoard.empty();
-        Pawn pawn = new Pawn("white", 4);
+        Pawn pawn = new Pawn(PieceColor.WHITE, 4);
         TestBoard.place(b, pawn, new Position(6, 4)); // e2
 
-        Pawn blocker = new Pawn("white", 4);
+        Pawn blocker = new Pawn(PieceColor.WHITE, 4);
         TestBoard.place(b, blocker, new Position(5, 4)); // e3
 
         List<Position> moves = pawn.getLegalMoves(b.getBoard(), pawn.getCurrentPosition());
@@ -38,16 +38,16 @@ public class PawnTest {
     @Test
     void whitePawn_capture_diagonal_only() {
         Board b = TestBoard.empty();
-        Pawn pawn = new Pawn("white", 4);
+        Pawn pawn = new Pawn(PieceColor.WHITE, 4);
         TestBoard.place(b, pawn, new Position(6, 4)); // e2
 
-        Pawn enemyLeft = new Pawn("black", 3);
+        Pawn enemyLeft = new Pawn(PieceColor.BLACK, 3);
         TestBoard.place(b, enemyLeft, new Position(5, 3)); // d3
 
-        Pawn enemyFront = new Pawn("black", 5);
+        Pawn enemyFront = new Pawn(PieceColor.BLACK, 5);
         TestBoard.place(b, enemyFront, new Position(5, 4)); // e3
 
-        Pawn enemyRight = new Pawn("black", 5);
+        Pawn enemyRight = new Pawn(PieceColor.BLACK, 5);
         TestBoard.place(b, enemyRight, new Position(5, 5)); // f3
 
         List<Position> captures = pawn.getLegalCaptures(b.getBoard(), pawn.getCurrentPosition());
@@ -60,13 +60,13 @@ public class PawnTest {
     @Test
     void whitePawn_on_edge_legal_en_passant() {
         Board b = TestBoard.empty();
-        Pawn pawn = new Pawn("white", 7);
+        Pawn pawn = new Pawn(PieceColor.WHITE, 7);
         TestBoard.place(b, pawn, new Position(3, 7)); // h5
 
-        Pawn enemyG = new Pawn("black", 6);
+        Pawn enemyG = new Pawn(PieceColor.BLACK, 6);
         TestBoard.place(b, enemyG, new Position(3, 6)); // g5
 
-        Move lastMove = new Move(enemyG, "black", new Position(1, 6), new Position(3, 6));
+        Move lastMove = new Move(enemyG, PieceColor.BLACK, new Position(1, 6), new Position(3, 6));
 
         Position enPassantCapture = pawn.getEnPassant(lastMove);
 
@@ -76,16 +76,16 @@ public class PawnTest {
     @Test
     void whitePawn_in_middle_legal_en_passant() {
         Board b = TestBoard.empty();
-        Pawn pawn = new Pawn("white", 4);
+        Pawn pawn = new Pawn(PieceColor.WHITE, 4);
         TestBoard.place(b, pawn, new Position(3, 4));   // e5
 
-        Pawn enemyD = new Pawn("black", 3);
+        Pawn enemyD = new Pawn(PieceColor.BLACK, 3);
         TestBoard.place(b, enemyD, new Position(3, 3)); // d5
 
-        Pawn enemyF = new Pawn("black", 5);
+        Pawn enemyF = new Pawn(PieceColor.BLACK, 5);
         TestBoard.place(b, enemyF, new Position(3, 5)); // f5
 
-        Move lastMove = new Move(enemyD, "black", new Position(1, 3), new Position(3, 3));
+        Move lastMove = new Move(enemyD, PieceColor.BLACK, new Position(1, 3), new Position(3, 3));
 
         Position enPassantCapture = pawn.getEnPassant(lastMove);
 
@@ -96,13 +96,13 @@ public class PawnTest {
     @Test
     void white_Pawn_illegal_en_passant() {
         Board b = TestBoard.empty();
-        Pawn pawn = new Pawn("white", 7);
+        Pawn pawn = new Pawn(PieceColor.WHITE, 7);
         TestBoard.place(b, pawn, new Position(3, 7)); // h4
 
-        Pawn enemyG = new Pawn("black", 6);
+        Pawn enemyG = new Pawn(PieceColor.BLACK, 6);
         TestBoard.place(b, enemyG, new Position(3, 6));
 
-        Move lastMove = new Move(enemyG, "black", new Position(2, 6), new Position(3, 6));
+        Move lastMove = new Move(enemyG, PieceColor.BLACK, new Position(2, 6), new Position(3, 6));
 
         Position enPassantCapture = pawn.getEnPassant(lastMove);
 
@@ -112,20 +112,20 @@ public class PawnTest {
     @Test
     void white_Pawn_capture_within_boundaries() {
         Board b = TestBoard.empty();
-        Pawn pawnRight = new Pawn("white", 7);
-        Pawn pawnMiddle = new Pawn("white", 4);
-        Pawn pawnLeft = new Pawn("white", 0);
+        Pawn pawnRight = new Pawn(PieceColor.WHITE, 7);
+        Pawn pawnMiddle = new Pawn(PieceColor.WHITE, 4);
+        Pawn pawnLeft = new Pawn(PieceColor.WHITE, 0);
         TestBoard.place(b, pawnRight, new Position(3, 7)); // h5
         TestBoard.place(b, pawnMiddle, new Position(3, 4)); // e5
         TestBoard.place(b, pawnLeft, new Position(3, 0)); // a5
 
-        Queen queenOnG = new Queen("black");
+        Queen queenOnG = new Queen(PieceColor.BLACK);
         TestBoard.place(b, queenOnG, new Position(2, 6));  // g6
-        Queen queenOnD = new Queen("black");
+        Queen queenOnD = new Queen(PieceColor.BLACK);
         TestBoard.place(b, queenOnD, new Position(2, 3));  // d6
-        Queen queenOnF = new Queen("white");
+        Queen queenOnF = new Queen(PieceColor.WHITE);
         TestBoard.place(b, queenOnF, new Position(2, 5));  // f6
-        Queen queenOnB = new Queen("black");
+        Queen queenOnB = new Queen(PieceColor.BLACK);
         TestBoard.place(b, queenOnB, new Position(2, 1));  // b6
 
         List<Position> capturesRight = pawnRight.getLegalCaptures(b.getBoard(), pawnRight.getCurrentPosition());

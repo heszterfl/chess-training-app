@@ -5,22 +5,22 @@ import java.util.List;
 
 public class Rook extends Piece {
 
-    public Rook(String color) {
+    public Rook(PieceColor color) {
         super(color);
     }
 
-    public Rook(String color, String side) {
+    public Rook(PieceColor color, String side) {
         super(color);
-        if (side.equals("queen") && color.equals("white")) {
+        if (side.equals("queen") && color == PieceColor.WHITE) {
             this.startingPosition = new Position(7, 0);
         }
-        if (side.equals("king") && color.equals("white")) {
+        if (side.equals("king") && color == PieceColor.WHITE) {
             this.startingPosition = new Position(7, 7);
         }
-        if (side.equals("queen") && color.equals("black")) {
+        if (side.equals("queen") && color == PieceColor.BLACK) {
             this.startingPosition = new Position(0, 0);
         }
-        if (side.equals("king") && color.equals("black")) {
+        if (side.equals("king") && color == PieceColor.BLACK) {
             this.startingPosition = new Position(0, 7);
         }
         this.currentPosition = startingPosition;
@@ -95,7 +95,7 @@ public class Rook extends Piece {
                 currentX--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX,y));
             }
             break;
@@ -109,7 +109,7 @@ public class Rook extends Piece {
                 currentX++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, y));
             }
             break;
@@ -123,7 +123,7 @@ public class Rook extends Piece {
                 currentY--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(x, currentY));
             }
             break;
@@ -137,7 +137,7 @@ public class Rook extends Piece {
                 currentY++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(x, currentY));
             }
             break;
@@ -148,7 +148,7 @@ public class Rook extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WR" : "BR";
+        return this.getColor() == PieceColor.BLACK ? "WR" : "BR";
     }
 
 }

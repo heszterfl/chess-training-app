@@ -2,7 +2,7 @@ package hu.eszter.chess.domain;
 
 public class PieceFactory {
 
-    public static Piece createPiece(PieceKind kind, String color, Position position) {
+    public static Piece createPiece(PieceKind kind, PieceColor color, Position position) {
         int row = position.row();
         int col = position.col();
 

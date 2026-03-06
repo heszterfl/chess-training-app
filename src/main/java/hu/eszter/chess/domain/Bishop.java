@@ -5,22 +5,22 @@ import java.util.List;
 
 public class Bishop extends Piece {
 
-    public Bishop(String color) {
+    public Bishop(PieceColor color) {
         super(color);
     }
 
-    public Bishop(String color, String side) {
+    public Bishop(PieceColor color, String side) {
         super(color);
-        if (side.equals("queen") && color.equals("white")) {
+        if (side.equals("queen") && color == PieceColor.WHITE) {
             this.startingPosition = new Position(7, 2);
         }
-        if (side.equals("king") && color.equals("white")) {
+        if (side.equals("king") && color == PieceColor.WHITE) {
             this.startingPosition = new Position(7, 5);
         }
-        if (side.equals("queen") && color.equals("black")) {
+        if (side.equals("queen") && color == PieceColor.BLACK) {
             this.startingPosition = new Position(0, 2);
         }
-        if (side.equals("king") && color.equals("black")) {
+        if (side.equals("king") && color == PieceColor.BLACK) {
             this.startingPosition = new Position(0, 5);
         }
         this.currentPosition = startingPosition;
@@ -106,7 +106,7 @@ public class Bishop extends Piece {
                 currentY--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -122,7 +122,7 @@ public class Bishop extends Piece {
                 currentY++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -138,7 +138,7 @@ public class Bishop extends Piece {
                 currentY++;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -154,7 +154,7 @@ public class Bishop extends Piece {
                 currentY--;
                 continue;
             }
-            if (!(p.color).equals(this.color)) {
+            if (!(p.getColor()).equals(this.getColor())) {
                 moves.add(new Position(currentX, currentY));
             }
             break;
@@ -165,7 +165,7 @@ public class Bishop extends Piece {
 
     @Override
     public String toString() {
-        return this.color.equals("white") ? "WB" : "BB";
+        return this.getColor() == PieceColor.WHITE ? "WB" : "BB";
     }
 
 }

@@ -1,5 +1,6 @@
 package hu.eszter.chess.ui;
 
+import hu.eszter.chess.domain.PieceColor;
 import hu.eszter.chess.domain.PieceKind;
 
 import javax.swing.*;
@@ -17,22 +18,22 @@ public class PiecePalettePanel extends JPanel {
         add(new JLabel("White:"));
         add(new JLabel(""));
 
-        addPieceButton("K", "white", PieceKind.KING);
-        addPieceButton("Q", "white", PieceKind.QUEEN);
-        addPieceButton("R", "white", PieceKind.ROOK);
-        addPieceButton("B", "white", PieceKind.BISHOP);
-        addPieceButton("N", "white", PieceKind.KNIGHT);
-        addPieceButton("P", "white", PieceKind.PAWN);
+        addPieceButton("K", PieceColor.WHITE, PieceKind.KING);
+        addPieceButton("Q", PieceColor.WHITE, PieceKind.QUEEN);
+        addPieceButton("R", PieceColor.WHITE, PieceKind.ROOK);
+        addPieceButton("B", PieceColor.WHITE, PieceKind.BISHOP);
+        addPieceButton("N", PieceColor.WHITE, PieceKind.KNIGHT);
+        addPieceButton("P", PieceColor.WHITE, PieceKind.PAWN);
 
         add(new JLabel("Black:"));
         add(new JLabel(""));
 
-        addPieceButton("K", "black", PieceKind.KING);
-        addPieceButton("Q", "black", PieceKind.QUEEN);
-        addPieceButton("R", "black", PieceKind.ROOK);
-        addPieceButton("B", "black", PieceKind.BISHOP);
-        addPieceButton("N", "black", PieceKind.KNIGHT);
-        addPieceButton("P", "black", PieceKind.PAWN);
+        addPieceButton("K", PieceColor.BLACK, PieceKind.KING);
+        addPieceButton("Q", PieceColor.BLACK, PieceKind.QUEEN);
+        addPieceButton("R", PieceColor.BLACK, PieceKind.ROOK);
+        addPieceButton("B", PieceColor.BLACK, PieceKind.BISHOP);
+        addPieceButton("N", PieceColor.BLACK, PieceKind.KNIGHT);
+        addPieceButton("P", PieceColor.BLACK, PieceKind.PAWN);
 
         // Törlés (radír) gomb
         JButton clearBtn = new JButton("Eraser");
@@ -41,8 +42,8 @@ public class PiecePalettePanel extends JPanel {
         add(clearBtn);
     }
 
-    private void addPieceButton(String label, String color, PieceKind kind) {
-        JButton btn = new JButton(label + " (" + color.charAt(0) + ")");
+    private void addPieceButton(String label, PieceColor color, PieceKind kind) {
+        JButton btn = new JButton(label + " (" + (color == PieceColor.WHITE ? "w" : "b") + ")");
         btn.addActionListener(e ->
                 selectionListener.accept(new PaletteSelection(color, kind))
         );

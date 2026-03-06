@@ -7,9 +7,9 @@ public abstract class Piece {
     public Position startingPosition;
     public Position currentPosition;
 
-    public String color;
+    private final PieceColor color;
 
-    public Piece(String color) {
+    public Piece(PieceColor color) {
 //        System.out.println("Piece constructor --> ");
         this.color = color;
     }
@@ -32,7 +32,7 @@ public abstract class Piece {
         this.currentPosition = position;
     }
 
-    public String getColor() {
+    public PieceColor getColor() {
         return color;
     }
 }

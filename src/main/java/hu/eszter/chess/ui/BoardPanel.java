@@ -193,4 +193,11 @@ public class BoardPanel extends JPanel {
         this.selectedSquare = null;
         resetSquareColors();
     }
+
+    public void gameReset() {
+        board = gameService.getBoard();
+        selectedSquare = null;
+        resetSquareColors();
+        refreshBoard();
+    }
 }

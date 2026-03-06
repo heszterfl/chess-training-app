@@ -8,15 +8,17 @@ import java.awt.*;
 public class ChessWindow extends JFrame {
 
     private final BoardPanel boardPanel;
+    private final GameService gameService;
+    private final JTextArea moveLogArea;
 
     public ChessWindow(boolean customSetup) {
-        GameService gameService = new GameService();
+        gameService = new GameService();
 
         setTitle("Chess Training App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JTextArea moveLogArea = new JTextArea(20, 20);
+        moveLogArea = new JTextArea(20, 20);
         moveLogArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(moveLogArea);
 
@@ -30,11 +32,23 @@ public class ChessWindow extends JFrame {
         add(boardPanel, BorderLayout.CENTER);
         add(scrollPane, BorderLayout.EAST);
 
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
         if (customSetup) {
             JButton startGameButton = new JButton("Start game");
             startGameButton.addActionListener(e -> boardPanel.exitSetupMode());
-            add(startGameButton, BorderLayout.SOUTH);
+            buttonPanel.add(startGameButton);
         }
+
+        JButton newGameButton = new JButton("New game");
+        newGameButton.addActionListener(e -> {
+            gameService.newGame();
+            moveLogArea.setText("");
+            boardPanel.gameReset();
+        });
+        buttonPanel.add(newGameButton);
+
+        add(buttonPanel, BorderLayout.SOUTH);
 
         pack();
         setLocationRelativeTo(null);

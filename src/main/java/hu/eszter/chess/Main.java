@@ -93,10 +93,10 @@ public class Main {
             from = convertSquareToArray(start);
             to = convertSquareToArray(end);
 
-            if (board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).getColor() == PieceColor.WHITE) {
+            if (board.isWhiteToMove() && board.getPieceAt(from).getColor() == PieceColor.WHITE) {
                 board.tryMove(from, to);
 
-            } else if (!board.isWhiteToMove() && board.getPieceAt(board.getBoard(), from).getColor() == PieceColor.BLACK) {
+            } else if (!board.isWhiteToMove() && board.getPieceAt(from).getColor() == PieceColor.BLACK) {
                 board.tryMove(from, to);
             } else {
                 continue;

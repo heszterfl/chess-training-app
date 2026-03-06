@@ -157,8 +157,8 @@ public class Board {
         return squares;
     }
 
-    public Piece getPieceAt(Piece[][] board, Position position) {
-        if (board[position.row()][position.col()] == null) {
+    public Piece getPieceAt(Position position) {
+        if (squares[position.row()][position.col()] == null) {
             return null;
         }
         return squares[position.row()][position.col()];
@@ -195,7 +195,7 @@ public class Board {
 
         if (!inbounds(currentPos) || !inbounds(newPos)) return false;
 
-        Piece piece = getPieceAt(squares, currentPos);
+        Piece piece = getPieceAt(currentPos);
         if (piece == null) {
             return false;
         }
@@ -204,22 +204,24 @@ public class Board {
             return false;
         }
 
-        if (isKingInCheck(lastMove.piece())) {
-            if (piece instanceof King && (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) ||
-                    piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(newPos))) {
-                applyMove(piece, currentPos, newPos);
-                return true;
-            } else if (!(piece instanceof King) && piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(lastMove.to())) {
-                applyMove(piece, currentPos, newPos);
-                return true;
-            } else if (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) &&
-                    getSquaresBetween(lastMove.to(), kingPosition).contains(newPos)) {
-                applyMove(piece, currentPos, newPos);
-                return true;
+        if(lastMove != null) {
+            if (isKingInCheck(lastMove.piece())) {
+                if (piece instanceof King && (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) ||
+                        piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(newPos))) {
+                    applyMove(piece, currentPos, newPos);
+                    return true;
+                } else if (!(piece instanceof King) && piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(lastMove.to())) {
+                    applyMove(piece, currentPos, newPos);
+                    return true;
+                } else if (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) &&
+                        getSquaresBetween(lastMove.to(), kingPosition).contains(newPos)) {
+                    applyMove(piece, currentPos, newPos);
+                    return true;
+                }
             }
         }
 
-        boolean targetEmpty = getPieceAt(squares, newPos) == null;
+        boolean targetEmpty = getPieceAt(newPos) == null;
 
         if (targetEmpty) {
             if (piece instanceof Pawn pawn) {
@@ -247,7 +249,7 @@ public class Board {
                 return false;
             }
 
-            Piece toRemove = getPieceAt(squares, newPos);
+            Piece toRemove = getPieceAt(newPos);
             if (toRemove != null) {
                 removed.add(toRemove);
                 toRemove.setCurrentPosition(null);
@@ -291,7 +293,7 @@ public class Board {
 
     public List<Position> getSquaresBetween(Position attacker, Position king) {
         List<Position> squaresBetween = new ArrayList<>();
-        Piece attackerPiece = getPieceAt(getBoard(), attacker);
+        Piece attackerPiece = getPieceAt(attacker);
         Position direction = getDirectionToKing(attacker, king);
         int rowDiff = Math.abs(attacker.row() - king.row());
         int colDiff = Math.abs(attacker.col() - king.col());
@@ -367,6 +369,9 @@ public class Board {
     }
 
     public boolean isCheckmated(Position kingPos) {
+        if (lastMove == null) {
+            return false;
+        }
         List<Position> legalCaptures = new ArrayList<>();
         boolean legalCaptureFound = false;
         List<Piece> army = isWhiteToMove() ? getWhiteArmy(squares) : getBlackArmy(squares);
@@ -391,7 +396,7 @@ public class Board {
             }
         }
 
-        Piece king = getPieceAt(squares, kingPos);
+        Piece king = getPieceAt(kingPos);
         if (isKingInCheck(lastMove.piece())) {
             if (king.getLegalMoves(squares, king.getCurrentPosition()).isEmpty() &&
                     king.getLegalCaptures(squares, king.getCurrentPosition()).isEmpty() &&
@@ -412,7 +417,7 @@ public class Board {
                     continue;
                 }
                 if (board[i][j].getColor() == PieceColor.WHITE) {
-                    Piece p = getPieceAt(board, new Position(i, j));
+                    Piece p = getPieceAt(new Position(i, j));
                     whiteArmy.add(p);
                 }
             }
@@ -428,7 +433,7 @@ public class Board {
                     continue;
                 }
                 if (board[i][j].getColor() == PieceColor.BLACK) {
-                    Piece p = getPieceAt(board, new Position(i, j));
+                    Piece p = getPieceAt(new Position(i, j));
                     blackArmy.add(p);
                 }
             }
@@ -438,7 +443,7 @@ public class Board {
 
     public void moveEnPassant(Piece pawn, Position currentPos, Position newPos) {
 
-        Piece toRemove = getPieceAt(this.getBoard(), new Position(currentPos.row(), newPos.col()));
+        Piece toRemove = getPieceAt(new Position(currentPos.row(), newPos.col()));
         removed.add(toRemove);
         squares[currentPos.row()][newPos.col()] = null;
 

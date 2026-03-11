@@ -1,9 +1,11 @@
 package hu.eszter.chess.ui;
 
 import hu.eszter.chess.app.GameService;
+import hu.eszter.chess.persistence.Database;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class ChessWindow extends JFrame {
 
@@ -55,6 +57,13 @@ public class ChessWindow extends JFrame {
     }
 
     public static void main(String[] args) {
+
+        try {
+            Database.initialize();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         SwingUtilities.invokeLater(() -> {
 

@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardTest {
 
@@ -252,5 +251,34 @@ public class BoardTest {
         assertTrue(squaresBetween.contains(new Position(3, 3)));
         assertFalse(squaresBetween.contains(new Position(3, 0)));
         assertFalse(squaresBetween.contains(new Position(3, 4)));
+    }
+
+    @Test
+    void custom_position_first_legal_move_succeeds() {
+        Board b = TestBoard.empty();
+        King whiteKing = new King(PieceColor.WHITE);
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        King blackKing = new King(PieceColor.BLACK);
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+
+        TestBoard.place(b, whiteKing, new Position(5, 2));
+        TestBoard.place(b, blackKing, new Position(3, 2));
+        TestBoard.place(b, whitePawn, new Position(4, 4));
+        TestBoard.place(b, blackPawn, new Position(3, 0));
+
+        assertTrue(b.tryMove(new Position(4, 4), new Position(3, 4)));
+        assertSame(whitePawn, b.getPieceAt(new Position(3, 4)));
+        assertNull(b.getPieceAt(new Position(4, 4)));
+    }
+
+    @Test
+    void initial_position_first_legal_move_succeeds() {
+        Board b = new Board();
+
+        var piece = b.getPieceAt(new Position(6, 4));
+
+        assertTrue(b.tryMove(new Position(6, 4), new Position(4, 4)));
+        assertSame(piece, b.getPieceAt(new Position(4, 4)));
+        assertNull(b.getPieceAt(new Position(6, 4)));
     }
 }

@@ -89,6 +89,11 @@ public class King extends Piece {
     }
 
     @Override
+    public PieceKind getPieceKind() {
+        return PieceKind.KING;
+    }
+
+    @Override
     public String toString() {
         return this.getColor() == PieceColor.WHITE ? "WK" : "BK";
     }

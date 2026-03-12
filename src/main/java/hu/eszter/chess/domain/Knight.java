@@ -83,6 +83,11 @@ public class Knight extends Piece {
     }
 
     @Override
+    public PieceKind getPieceKind() {
+        return PieceKind.KNIGHT;
+    }
+
+    @Override
     public String toString() {
         return this.getColor() == PieceColor.WHITE ? "WN" : "BN";
     }

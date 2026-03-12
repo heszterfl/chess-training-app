@@ -146,6 +146,11 @@ public class Pawn extends Piece {
         return captures;
     }
 
+    @Override
+    public PieceKind getPieceKind() {
+        return PieceKind.PAWN;
+    }
+
     // ellenőrzi, hogy enPassant lehetséges és visszaadja a mezőt, ahova en passant-tal lehet lépni
     public Position getEnPassant(Move lastMove) {
 

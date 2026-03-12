@@ -20,6 +20,8 @@ public abstract class Piece {
 
     public abstract List<Position> getLegalCaptures(Piece[][] board, Position position);
 
+    public abstract PieceKind getPieceKind();
+
     public int[] getStartingPosition() {
         return new int[]{this.startingPosition.row(), this.startingPosition.col()};
     }
@@ -35,4 +37,5 @@ public abstract class Piece {
     public PieceColor getColor() {
         return color;
     }
+
 }

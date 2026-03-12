@@ -147,6 +147,11 @@ public class Rook extends Piece {
     }
 
     @Override
+    public PieceKind getPieceKind() {
+        return PieceKind.ROOK;
+    }
+
+    @Override
     public String toString() {
         return this.getColor() == PieceColor.BLACK ? "WR" : "BR";
     }

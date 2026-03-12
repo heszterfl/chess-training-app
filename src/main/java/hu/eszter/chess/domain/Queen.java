@@ -238,6 +238,11 @@ public class Queen extends Piece {
     }
 
     @Override
+    public PieceKind getPieceKind() {
+        return PieceKind.QUEEN;
+    }
+
+    @Override
     public String toString() {
         return this.getColor() == PieceColor.WHITE ? "WQ" : "BQ";
     }

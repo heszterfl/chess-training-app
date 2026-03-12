@@ -164,6 +164,11 @@ public class Bishop extends Piece {
     }
 
     @Override
+    public PieceKind getPieceKind() {
+        return PieceKind.BISHOP;
+    }
+
+    @Override
     public String toString() {
         return this.getColor() == PieceColor.WHITE ? "WB" : "BB";
     }

@@ -499,4 +499,8 @@ public class Board {
             System.out.println();
         }
     }
+
+    public boolean getIsLegalMove(Position currentPos, Position newPos) {
+        return isLegalMove(currentPos, newPos);
+    }
 }

@@ -281,4 +281,81 @@ public class BoardTest {
         assertSame(piece, b.getPieceAt(new Position(4, 4)));
         assertNull(b.getPieceAt(new Position(6, 4)));
     }
+
+    @Test
+    void piece_does_not_capture_own_piece() {
+        Board b = TestBoard.empty();
+
+        Piece queen = new Queen(PieceColor.WHITE);
+        Piece pawn = new Pawn(PieceColor.WHITE);
+
+        TestBoard.place(b, queen, new Position(4, 4));
+        TestBoard.place(b, pawn, new Position(5, 4));
+
+        assertFalse(b.tryMove(new Position(4, 4), new Position(5, 4)));
+    }
+
+    @Test
+    void tryMove_returns_true_if_correct_side_wants_to_move() {
+        Board b = TestBoard.empty();
+
+        Piece queen = new Queen(PieceColor.WHITE);
+
+        TestBoard.place(b, queen, new Position(4, 4));
+        b.whiteToMove = true;
+
+        assertTrue(b.tryMove(new Position(4, 4), new Position(5, 4)));
+    }
+
+    @Test
+    void tryMove_returns_false_if_wrong_side_wants_to_move() {
+        Board b = TestBoard.empty();
+
+        Piece queen = new Queen(PieceColor.BLACK);
+
+        TestBoard.place(b, queen, new Position(4, 4));
+        b.whiteToMove = true;
+
+        assertFalse(b.tryMove(new Position(4, 4), new Position(5, 4)));
+    }
+
+    @Test
+    void tryMove_returns_false_if_from_equals_to() {
+        Board b = TestBoard.empty();
+
+        Piece queen = new Queen(PieceColor.BLACK);
+
+        TestBoard.place(b, queen, new Position(4, 4));
+
+        assertFalse(b.tryMove(new Position(4, 4), new Position(4, 4)));
+    }
+
+    @Test
+    void tryMove_returns_false_if_no_piece_on_currentPos() {
+        Board b = TestBoard.empty();
+
+        assertFalse(b.tryMove(new Position(4, 4), new Position(5, 4)));
+    }
+
+    @Test
+    void illegal_move_does_not_change_board_state() {
+        Board b = TestBoard.empty();
+
+        Piece queen = new Queen(PieceColor.WHITE);
+        Piece pawn = new Pawn(PieceColor.WHITE);
+
+        TestBoard.place(b, queen, new Position(4, 4));
+        TestBoard.place(b, pawn, new Position(5, 4));
+
+        int pastMovesCountBefore = b.getPastMoves().size();
+
+        boolean notMoved = b.tryMove(new Position(4, 4), new Position(5, 4));
+
+        int pastMovesCountAfter = b.getPastMoves().size();
+
+        assertFalse(notMoved);
+        assertEquals(new Position(4, 4), queen.getCurrentPosition());
+        assertEquals(new Position(5, 4), pawn.getCurrentPosition());
+        assertEquals(pastMovesCountBefore, pastMovesCountAfter);
+    }
 }

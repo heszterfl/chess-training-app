@@ -176,6 +176,12 @@ public class Board {
             blackKingPosition = newPos;
         }
 
+        Piece toRemove = getPieceAt(newPos);
+        if (toRemove != null) {
+            removed.add(toRemove);
+            toRemove.setCurrentPosition(null);
+        }
+
         piece.setCurrentPosition(newPos);
         squares[newX][newY] = piece;
         squares[currentX][currentY] = null;
@@ -195,27 +201,45 @@ public class Board {
 
         if (!inbounds(currentPos) || !inbounds(newPos)) return false;
 
+        if (currentPos.equals(newPos)) {
+            return false;
+        }
+
         Piece piece = getPieceAt(currentPos);
         if (piece == null) {
             return false;
         }
 
-        if (currentPos.equals(newPos)) {
+        if ((whiteToMove && piece.getColor() == PieceColor.BLACK) ||
+                (!whiteToMove && piece.getColor() == PieceColor.WHITE)) {
             return false;
         }
+
+        Piece targetPiece = getPieceAt(newPos);
+        if (targetPiece != null && targetPiece.getColor() == piece.getColor()) {
+            return false;
+        }
+
+        if (isLegalMove(currentPos, newPos)) {
+            applyMove(piece, currentPos, newPos);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isLegalMove(Position currentPos, Position newPos) {
+        Piece piece = getPieceAt(currentPos);
 
         if(lastMove != null) {
             if (isKingInCheck(lastMove.piece())) {
                 if (piece instanceof King && (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) ||
                         piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(newPos))) {
-                    applyMove(piece, currentPos, newPos);
                     return true;
                 } else if (!(piece instanceof King) && piece.getLegalCaptures(squares, piece.getCurrentPosition()).contains(lastMove.to())) {
-                    applyMove(piece, currentPos, newPos);
                     return true;
                 } else if (piece.getLegalMoves(squares, piece.getCurrentPosition()).contains(newPos) &&
                         getSquaresBetween(lastMove.to(), kingPosition).contains(newPos)) {
-                    applyMove(piece, currentPos, newPos);
                     return true;
                 }
             }
@@ -223,46 +247,31 @@ public class Board {
 
         boolean targetEmpty = getPieceAt(newPos) == null;
 
-        if (targetEmpty) {
-            if (piece instanceof Pawn pawn) {
+        if (piece instanceof Pawn pawn) {
+            if (targetEmpty) {
                 Position ep = pawn.getEnPassant(getLastMove());
-                if (ep != null && ep.equals(newPos)) {
-                    moveEnPassant(pawn, currentPos, newPos);
+                if (isPromotionSquare(piece, newPos)) {
+                    Piece newPiece = new Queen(piece.getColor());
+                    return true;
+                } else if (ep != null && ep.equals(newPos)) {
+                    return true;
+                }
+            } else {
+                if (isPromotionSquare(piece, newPos)) {
                     return true;
                 }
             }
+        }
 
+        if (targetEmpty) {
             if (!piece.getLegalMoves(squares, currentPos).contains(newPos)) {
                 return false;
             }
-
-            if (isPromotionSquare(piece, newPos)) {
-                Piece newPiece = new Queen(piece.getColor());
-                applyMove(newPiece, currentPos, newPos);
-                return true;
-            }
-
-            applyMove(piece, currentPos, newPos);
             return true;
         } else {
             if (!piece.getLegalCaptures(squares, currentPos).contains(newPos)) {
                 return false;
             }
-
-            Piece toRemove = getPieceAt(newPos);
-            if (toRemove != null) {
-                removed.add(toRemove);
-                toRemove.setCurrentPosition(null);
-            }
-
-
-            if (isPromotionSquare(piece, newPos)) {
-                Piece newPiece = new Queen(piece.getColor());
-                applyMove(newPiece, currentPos, newPos);
-                return true;
-            }
-
-            applyMove(piece, currentPos, newPos);
             return true;
         }
     }

@@ -18,7 +18,7 @@ public class GamePersistenceService {
         this.moveRepository = new MoveRepository();
     }
 
-    public void saveGame(Game game, List<Move> moves) throws SQLException {
+    public Game saveGame(Game game, List<Move> moves) throws SQLException {
 
         if (game == null || moves == null) {
             throw new IllegalArgumentException("Invalid input");
@@ -33,6 +33,8 @@ public class GamePersistenceService {
             moveRepository.save(gameId, moveIndex, move);
             moveIndex++;
         }
+
+        return game;
     }
 
     public GameRepository getGameRepository() {

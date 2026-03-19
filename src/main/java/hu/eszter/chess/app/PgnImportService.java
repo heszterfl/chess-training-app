@@ -6,6 +6,7 @@ import hu.eszter.chess.pgn.PgnGame;
 import hu.eszter.chess.pgn.PgnGameConverter;
 import hu.eszter.chess.pgn.PgnParser;
 
+import java.io.*;
 import java.sql.SQLException;
 
 public class PgnImportService {
@@ -31,5 +32,19 @@ public class PgnImportService {
         ImportedGame imported = converter.convert(pgnGame);
 
         return gamePersistenceService.saveGame(imported.game(), imported.moves());
+    }
+
+    public Game importPgn(File file) throws IOException, SQLException {
+        StringBuilder sb = new StringBuilder();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+        }
+
+        return importPgn(sb.toString());
     }
 }

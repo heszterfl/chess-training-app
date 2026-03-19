@@ -37,6 +37,10 @@ public class GamePersistenceService {
         return game;
     }
 
+    public List<Game> loadAllGames() throws SQLException {
+        return gameRepository.findAll();
+    }
+
     public GameRepository getGameRepository() {
         return gameRepository;
     }

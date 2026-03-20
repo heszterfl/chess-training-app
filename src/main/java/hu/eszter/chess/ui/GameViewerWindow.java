@@ -5,19 +5,26 @@ import hu.eszter.chess.domain.*;
 import hu.eszter.chess.util.SquareNotation;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameViewerWindow extends JFrame {
     private final GamePersistenceService gamePersistenceService;
     private final List<Move> moves;
     private int currentMoveIndex;
-    private ReplayBoardPanel replayBoardPanel;
+    private final ReplayBoardPanel replayBoardPanel;
+    private final MovesTableModel movesTableModel;
+    private final JTable movesTable;
+    private int highlightRow;
+    private int highlightCol;
 
     public GameViewerWindow(Game game) throws SQLException {
         this.gamePersistenceService = new GamePersistenceService();
         this.replayBoardPanel = new ReplayBoardPanel();
+
 
         setTitle("Game Viewer - " + game.getId());
         setSize(800, 500);
@@ -36,24 +43,21 @@ public class GameViewerWindow extends JFrame {
         headerPanel.add(new JLabel("Date: " + game.getDate()));
         headerPanel.add(new JLabel("Result: " + game.getResult()));
 
-        JTextArea moveList = new JTextArea();
-        moveList.setEditable(false);
-
         this.moves = gamePersistenceService.loadMovesForGame(game.getId());
         this.currentMoveIndex = 0;
-        StringBuilder sb = new StringBuilder();
-        for (Move move : moves) {
-            sb.append(move.color())
-                    .append(": ")
-                    .append(SquareNotation.toSquare(move.from()))
-                    .append(" -> ")
-                    .append(SquareNotation.toSquare(move.to()))
-                    .append("\n");
-        }
-        String moveString = sb.toString();
-        moveList.setText(moveString);
 
-        JScrollPane scroll = new JScrollPane(moveList);
+        this.movesTableModel = new MovesTableModel();
+        this.movesTable = new JTable(movesTableModel);
+
+        MoveHighlightRenderer renderer = new MoveHighlightRenderer();
+
+        movesTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
+        movesTable.getColumnModel().getColumn(2).setCellRenderer(renderer);
+
+        List<MoveRow> rows = movesToRows(moves);
+        movesTableModel.setRows(rows);
+
+        JScrollPane scroll = new JScrollPane(movesTable);
 
         JPanel controlPanel = new JPanel();
 
@@ -62,17 +66,19 @@ public class GameViewerWindow extends JFrame {
         prevButton.addActionListener(e -> {
             if (currentMoveIndex > 0) {
                 currentMoveIndex--;
-                System.out.println("Index: " + currentMoveIndex);
+                calculateHighlight();
                 Board board = updateReplayBoard();
                 replayBoardPanel.setBoard(board);
+                movesTable.repaint();
             }
         });
         nextButton.addActionListener(e -> {
             if (currentMoveIndex < moves.size()) {
                 currentMoveIndex++;
-                System.out.println("Index: " + currentMoveIndex);
+                calculateHighlight();
                 Board board = updateReplayBoard();
                 replayBoardPanel.setBoard(board);
+                movesTable.repaint();
             }
         });
 
@@ -86,6 +92,7 @@ public class GameViewerWindow extends JFrame {
         add(boardPanel, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
 
+        calculateHighlight();
         Board board = updateReplayBoard();
         replayBoardPanel.setBoard(board);
     }
@@ -101,5 +108,59 @@ public class GameViewerWindow extends JFrame {
             board.applyMove(piece, currentPos, newPos);
         }
         return board;
+    }
+
+    private List<MoveRow> movesToRows(List<Move> moves) {
+        List<MoveRow> moveRows = new ArrayList<>();
+
+        for (int i = 0; i < moves.size(); i += 2) {
+            int moveNumber = i / 2 + 1;
+            Move whiteMove = moves.get(i);
+            Move blackMove = (i+1 >= moves.size()) ? null : moves.get(i+1);
+
+            String white = SquareNotation.toSquare(whiteMove.from()) + " - " + SquareNotation.toSquare(whiteMove.to());
+            String black;
+            if (blackMove == null) {
+                black = "";
+            } else {
+                black = SquareNotation.toSquare(blackMove.from()) + " - " + SquareNotation.toSquare(blackMove.to());
+            }
+
+            MoveRow moveRow = new MoveRow(moveNumber, white, black);
+            moveRows.add(moveRow);
+        }
+
+        return moveRows;
+    }
+
+    private void calculateHighlight() {
+        if (currentMoveIndex == 0) {
+            highlightRow = -1;
+            highlightCol = -1;
+        } else {
+            int highLightMoveIndex = currentMoveIndex - 1;
+            highlightRow = highLightMoveIndex / 2;
+            highlightCol = (highLightMoveIndex % 2 == 0) ? 1 : 2;
+        }
+    }
+
+    private class MoveHighlightRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            Font baseFont = component.getFont();
+
+            if (row == highlightRow && column == highlightCol) {
+                component.setBackground(new Color(210, 210, 210));
+                component.setFont(baseFont.deriveFont(Font.BOLD));
+            } else {
+                component.setBackground(Color.WHITE);
+                component.setFont(baseFont.deriveFont(Font.PLAIN));
+            }
+
+            return component;
+        }
     }
 }

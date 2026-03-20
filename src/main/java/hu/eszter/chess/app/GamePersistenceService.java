@@ -41,6 +41,10 @@ public class GamePersistenceService {
         return gameRepository.findAll();
     }
 
+    public List<Move> loadMovesForGame(long gameId) throws SQLException {
+        return moveRepository.findByGameId(gameId);
+    }
+
     public GameRepository getGameRepository() {
         return gameRepository;
     }

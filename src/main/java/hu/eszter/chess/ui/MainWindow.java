@@ -40,8 +40,17 @@ public class MainWindow extends JFrame {
                     if (selectedRow >= 0) {
                         Game selectedGame = gamesTableModel.getGameAt(selectedRow);
 
-                        GameViewerWindow viewer = new GameViewerWindow(selectedGame);
-                        viewer.setVisible(true);
+                        try {
+                            GameViewerWindow viewer = new GameViewerWindow(selectedGame);
+                            viewer.setVisible(true);
+                        } catch (SQLException ex) {
+                            JOptionPane.showMessageDialog(
+                                    MainWindow.this,
+                                    "Hiba történt a játszma betöltésekor:\n" + ex.getMessage(),
+                                    "Hiba",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
                     }
                 }
             }

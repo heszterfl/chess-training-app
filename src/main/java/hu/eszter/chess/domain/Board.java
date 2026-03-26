@@ -17,9 +17,15 @@ public class Board {
     boolean kingInCheck = false;
     Position whiteKingPosition;
     Position blackKingPosition;
-    Position kingPosition = isWhiteToMove() ? whiteKingPosition : blackKingPosition;
     boolean whiteToMove = true;
     public boolean isCheckMate = false;
+
+    private boolean whiteKingMoved = false;
+    private boolean blackKingMoved = false;
+    private boolean whiteKingsideRookMoved = false;
+    private boolean whiteQueensideRookMoved = false;
+    private boolean blackKingsideRookMoved = false;
+    private boolean blackQueensideRookMoved = false;
 
 
     public Board() {
@@ -98,6 +104,12 @@ public class Board {
 
         this.whiteKingPosition = other.whiteKingPosition;
         this.blackKingPosition = other.blackKingPosition;
+        this.whiteKingMoved = other.whiteKingMoved;
+        this.blackKingMoved = other.blackKingMoved;
+        this.whiteKingsideRookMoved = other.whiteKingsideRookMoved;
+        this.whiteQueensideRookMoved = other.whiteQueensideRookMoved;
+        this.blackKingsideRookMoved = other.blackKingsideRookMoved;
+        this.blackQueensideRookMoved = other.blackQueensideRookMoved;
         this.lastMove = other.lastMove;
         this.whiteToMove = other.whiteToMove;
     }
@@ -187,10 +199,82 @@ public class Board {
         int newX = newPos.row();
         int newY = newPos.col();
 
+        if (piece instanceof King && isValidCastlingMove(piece, currentPosition, newPos)) {
+
+            if (piece.getColor() == WHITE) {
+                if (newPos.equals(new Position(7, 6))) {
+                    Piece rook = getPieceAt(new Position(7, 7));
+                    squares[7][6] = piece;
+                    squares[7][5] = rook;
+                    rook.setCurrentPosition(new Position(7, 5));
+                    piece.setCurrentPosition(newPos);
+                    squares[7][7] = null;
+                    squares[7][4] = null;
+                    whiteKingMoved = true;
+                    whiteKingsideRookMoved = true;
+                } else if (newPos.equals(new Position(7, 2))) {
+                    Piece rook = getPieceAt(new Position(7, 0));
+                    squares[7][2] = piece;
+                    squares[7][3] = rook;
+                    rook.setCurrentPosition(new Position(7, 3));
+                    piece.setCurrentPosition(newPos);
+                    squares[7][0] = null;
+                    squares[7][4] = null;
+                    whiteKingMoved = true;
+                    whiteQueensideRookMoved = true;
+                }
+                whiteKingPosition = newPos;
+            } else {
+                if (newPos.equals(new Position(0, 6))) {
+                    Piece rook = getPieceAt(new Position(0, 7));
+                    squares[0][6] = piece;
+                    squares[0][5] = rook;
+                    rook.setCurrentPosition(new Position(0, 5));
+                    piece.setCurrentPosition(newPos);
+                    squares[0][7] = null;
+                    squares[0][4] = null;
+                    blackKingMoved = true;
+                    blackKingsideRookMoved = true;
+                } else if (newPos.equals(new Position(0, 2))) {
+                    Piece rook = getPieceAt(new Position(0, 0));
+                    squares[0][2] = piece;
+                    squares[0][3] = rook;
+                    rook.setCurrentPosition(new Position(0, 3));
+                    piece.setCurrentPosition(newPos);
+                    squares[0][0] = null;
+                    squares[0][4] = null;
+                    blackKingMoved = true;
+                    blackQueensideRookMoved = true;
+                }
+                blackKingPosition = newPos;
+            }
+
+            lastMove = new Move(piece, piece.getColor(), currentPosition, newPos);
+            pastMoves.add(lastMove);
+            whiteToMove = !whiteToMove;
+            return;
+        }
+
         if (piece instanceof King && piece.getColor() == WHITE) {
             whiteKingPosition = newPos;
+            whiteKingMoved = true;
         } else if (piece instanceof King && piece.getColor() == BLACK) {
             blackKingPosition = newPos;
+            blackKingMoved = true;
+        }
+
+        if (piece instanceof Rook && piece.getColor() == WHITE) {
+            if (currentPosition.row() == 7 && currentPosition.col() == 7) {
+                whiteKingsideRookMoved = true;
+            } else if (currentPosition.row() == 7 && currentPosition.col() == 0) {
+                whiteQueensideRookMoved = true;
+            }
+        } else if (piece instanceof Rook && piece.getColor() == BLACK) {
+            if (currentPosition.row() == 0 && currentPosition.col() == 7) {
+                blackKingsideRookMoved = true;
+            } else if (currentPosition.row() == 0 && currentPosition.col() == 0) {
+                blackQueensideRookMoved = true;
+            }
         }
 
         Piece toRemove = getPieceAt(newPos);
@@ -245,16 +329,77 @@ public class Board {
         return false;
     }
 
-    private void simulateMove(Piece piece, Position currentPos, Position newPos) {
+    void simulateMove(Piece piece, Position currentPos, Position newPos) {
         int currentX = currentPos.row();
         int currentY = currentPos.col();
         int newX = newPos.row();
         int newY = newPos.col();
 
+        if (piece instanceof King && isValidCastlingMove(piece, currentPos, newPos)) {
+
+            if (piece.getColor() == WHITE) {
+                if (newPos.equals(new Position(7, 6))) {
+                    Piece rook = getPieceAt(new Position(7, 7));
+                    squares[7][6] = piece;
+                    squares[7][5] = rook;
+                    squares[7][7] = null;
+                    squares[7][4] = null;
+                    whiteKingMoved = true;
+                    whiteKingsideRookMoved = true;
+                } else if (newPos.equals(new Position(7, 2))) {
+                    Piece rook = getPieceAt(new Position(7, 0));
+                    squares[7][2] = piece;
+                    squares[7][3] = rook;
+                    squares[7][0] = null;
+                    squares[7][4] = null;
+                    whiteKingMoved = true;
+                    whiteQueensideRookMoved = true;
+                }
+                whiteKingPosition = newPos;
+            } else {
+                if (newPos.equals(new Position(0, 6))) {
+                    Piece rook = getPieceAt(new Position(0, 7));
+                    squares[0][6] = piece;
+                    squares[0][5] = rook;
+                    squares[0][7] = null;
+                    squares[0][4] = null;
+                    blackKingMoved = true;
+                    blackKingsideRookMoved = true;
+                } else if (newPos.equals(new Position(0, 2))) {
+                    Piece rook = getPieceAt(new Position(0, 0));
+                    squares[0][2] = piece;
+                    squares[0][3] = rook;
+                    squares[0][0] = null;
+                    squares[0][4] = null;
+                    blackKingMoved = true;
+                    blackQueensideRookMoved = true;
+                }
+                blackKingPosition = newPos;
+            }
+
+            return;
+        }
+
         if (piece instanceof King && piece.getColor() == WHITE) {
             whiteKingPosition = newPos;
+            whiteKingMoved = true;
         } else if (piece instanceof King && piece.getColor() == BLACK) {
             blackKingPosition = newPos;
+            blackKingMoved = true;
+        }
+
+        if (piece instanceof Rook && piece.getColor() == WHITE) {
+            if (currentPos.equals(new Position(7,7))) {
+                whiteKingsideRookMoved = true;
+            } else if (currentPos.equals(new Position(7,0))) {
+                whiteQueensideRookMoved = true;
+            }
+        } else if (piece instanceof Rook && piece.getColor() == BLACK) {
+            if (currentPos.equals(new Position(0,7))) {
+                blackKingsideRookMoved = true;
+            } else if (currentPos.equals(new Position(0,0))) {
+                blackQueensideRookMoved = true;
+            }
         }
 
         squares[newX][newY] = piece;
@@ -298,6 +443,10 @@ public class Board {
             }
         }
 
+        if (piece instanceof King && isValidCastlingMove(piece, currentPos, newPos)) {
+            return true;
+        }
+
         if (targetEmpty) {
             if (!piece.getLegalMoves(squares, currentPos).contains(newPos)) {
                 return false;
@@ -309,6 +458,106 @@ public class Board {
             }
             return true;
         }
+    }
+
+    private boolean isCastlingMove(Piece piece, Position currentPos, Position newPos) {
+        if (piece instanceof King) {
+            if (piece.getColor() == WHITE) {
+                if ((currentPos.equals(new Position(7, 4))) &&
+                        (newPos.equals(new Position(7, 6)) || newPos.equals(new Position(7, 2)))) {
+                    return true;
+                }
+            } else {
+                if ((currentPos.equals(new Position(0, 4))) &&
+                        (newPos.equals(new Position(0, 6)) || newPos.equals(new Position(0, 2)))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isValidCastlingMove(Piece piece, Position currentPos, Position newPos) {
+        PieceColor color = piece.getColor();
+        PieceColor opposite = color == WHITE ? BLACK : WHITE;
+
+        if (!isCastlingMove(piece, currentPos, newPos)) {
+            return false;
+        }
+
+        if (isKingInCheck(color)) {
+            return false;
+        }
+
+        if (color == WHITE) {
+            if (newPos.equals(new Position(7, 6))) {
+                if (whiteKingsideRookMoved || whiteKingMoved) {
+                    return false;
+                }
+                Piece p = getPieceAt(new Position(7, 7));
+                if (p == null || p.getColor() != color || !(p instanceof Rook)) {
+                    return false;
+                }
+                if (getPieceAt(new Position(7, 5)) != null || getPieceAt(new Position(7, 6)) != null) {
+                    return false;
+                }
+                if (isSquareAttacked(new Position(7, 5), opposite)) {
+                    return false;
+                }
+            } else if (newPos.equals(new Position(7, 2))) {
+                if (whiteQueensideRookMoved || whiteKingMoved) {
+                    return false;
+                }
+                Piece p = getPieceAt(new Position(7, 0));
+                if (p == null || p.getColor() != color || !(p instanceof Rook)) {
+                    return false;
+                }
+                if (getPieceAt(new Position(7, 3)) != null || getPieceAt(new Position(7, 2)) != null ||
+                    getPieceAt(new Position(7, 1)) != null) {
+                    return false;
+                }
+                if (isSquareAttacked(new Position(7, 3), opposite)) {
+                    return false;
+                }
+            }
+        } else {
+            if (newPos.equals(new Position(0, 6))) {
+                if (blackKingsideRookMoved || blackKingMoved) {
+                    return false;
+                }
+                Piece p = getPieceAt(new Position(0, 7));
+                if (p == null || p.getColor() != color || !(p instanceof Rook)) {
+                    return false;
+                }
+                if (getPieceAt(new Position(0, 5)) != null || getPieceAt(new Position(0, 6)) != null) {
+                    return false;
+                }
+                if (isSquareAttacked(new Position(0, 5), opposite)) {
+                    return false;
+                }
+            } else if (newPos.equals(new Position(0, 2))) {
+                if (blackQueensideRookMoved || blackKingMoved) {
+                    return false;
+                }
+                Piece p = getPieceAt(new Position(0, 0));
+                if (p == null || p.getColor() != color || !(p instanceof Rook)) {
+                    return false;
+                }
+                if (getPieceAt(new Position(0, 3)) != null || getPieceAt(new Position(0, 2)) != null ||
+                        getPieceAt(new Position(0, 1)) != null) {
+                    return false;
+                }
+                if (isSquareAttacked(new Position(0, 3), opposite)) {
+                    return false;
+                }
+            }
+        }
+
+        if (isSquareAttacked(newPos, opposite)) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean inbounds(Position pos) {
@@ -761,5 +1010,17 @@ public class Board {
 
     public boolean getIsLegalMove(Position currentPos, Position newPos) {
         return isLegalMove(currentPos, newPos);
+    }
+
+    void setWhiteKingMovedForTest(boolean value) {
+        this.whiteKingMoved = value;
+    }
+
+    void setBlackKingMovedForTest(boolean value) {
+        this.blackKingMoved = value;
+    }
+
+    void setWhiteKingsideRookMovedForTest(boolean value) {
+        this.whiteKingsideRookMoved = value;
     }
 }

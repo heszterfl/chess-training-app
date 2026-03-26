@@ -139,7 +139,7 @@ public class King extends Piece {
             Piece p = board[x][currentY];
             if (p == null) {
                 currentY--;
-            } else if (currentY == y + 1 && !(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
+            } else if (currentY == y - 1 && !(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook || p instanceof King)) {
                 return true;
             } else if (!(p.getColor()).equals(this.getColor()) && (p instanceof Queen || p instanceof Rook)) {
                 return true;

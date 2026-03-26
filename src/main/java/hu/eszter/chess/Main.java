@@ -54,7 +54,7 @@ public class Main {
         }
 
 // READING IN USER INPUT
-        while (!board.isCheckMate) {
+        while (!board.isCheckmate) {
             board.printBoard();
             scanner = new Scanner(System.in);
             System.out.println("What's your move with " + (board.isWhiteToMove() ? "white" : "black") + "? (i.e. e2-e4 / e2xf3 / Ng1-f3 / Ng1xf3) ");

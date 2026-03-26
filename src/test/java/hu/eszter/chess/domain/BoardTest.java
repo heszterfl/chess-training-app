@@ -277,12 +277,28 @@ public class BoardTest {
         Rook rook = new Rook(PieceColor.BLACK);
         TestBoard.place(b, rook, new Position(2, 7));
 
-        Move lastMove = new Move(king, PieceColor.WHITE, new Position(1, 1), new Position(0, 0));
-        b.setLastMove(lastMove);
         b.whiteToMove = false;
-        b.tryMove(new Position(2, 7), new Position(0, 7));
 
-        assertTrue(b.isCheckmated(king.getCurrentPosition()));
+        assertTrue(b.tryMove(new Position(2, 7), new Position(0, 7)));
+        assertTrue(b.isCheckmated(king.getColor()));
+    }
+
+    @Test
+    void king_stalemated() {
+        Board b = TestBoard.empty();
+        King king = new King(PieceColor.BLACK);
+        TestBoard.place(b, king, new Position(0, 0));
+        b.blackKingPosition = new Position(0, 0);
+
+        Queen queen = new Queen(PieceColor.WHITE);
+        TestBoard.place(b, queen, new Position(7, 1));
+        Rook rook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook, new Position(2, 7));
+
+        b.whiteToMove = true;
+
+        assertTrue(b.tryMove(new Position(2, 7), new Position(1, 7)));
+        assertTrue(b.isStalemated(king.getColor()));
     }
 
     @Test

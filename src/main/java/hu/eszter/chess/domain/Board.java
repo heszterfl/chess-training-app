@@ -18,7 +18,8 @@ public class Board {
     Position whiteKingPosition;
     Position blackKingPosition;
     boolean whiteToMove = true;
-    public boolean isCheckMate = false;
+    public boolean isCheckmate = false;
+    public boolean isStalemate = false;
 
     private boolean whiteKingMoved = false;
     private boolean blackKingMoved = false;
@@ -249,9 +250,7 @@ public class Board {
                 blackKingPosition = newPos;
             }
 
-            lastMove = new Move(piece, piece.getColor(), currentPosition, newPos);
-            pastMoves.add(lastMove);
-            whiteToMove = !whiteToMove;
+            finalizeMove(piece, currentPosition, newPos);
             return;
         }
 
@@ -287,14 +286,21 @@ public class Board {
         squares[newX][newY] = piece;
         squares[currentX][currentY] = null;
 
-        lastMove = new Move(piece, piece.getColor(), currentPosition, newPos);
+        finalizeMove(piece, currentPosition, newPos);
+    }
+
+    void finalizeMove(Piece piece, Position currentPos, Position newPos) {
+        lastMove = new Move(piece, piece.getColor(), currentPos, newPos);
         pastMoves.add(lastMove);
 
         whiteToMove = !whiteToMove;
 
-        if (whiteToMove && isCheckmated(whiteKingPosition)) {
-            isCheckMate = true;
-            System.out.println("Checkmate!");
+        PieceColor toMove = whiteToMove ? WHITE : BLACK;
+        if (isCheckmated(toMove)) {
+            isCheckmate = true;
+        }
+        if (isStalemated(toMove)) {
+            isStalemate = true;
         }
     }
 
@@ -567,21 +573,6 @@ public class Board {
     private boolean isPromotionSquare(Piece piece, Position to) {
         return piece instanceof Pawn &&
                 ((piece.getColor() == WHITE && to.row() == 0) || (piece.getColor() == BLACK && to.row() == 7));
-    }
-
-    private static Piece getPiece(Position newPos, Piece piece) {
-        // TODO: replace console input with UI selection
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("getPiece(): ");
-        String input = scanner.next();
-        Piece newPiece = switch (input) {
-            case "bishop" -> new Bishop(piece.getColor());
-            case "knight" -> new Knight(piece.getColor());
-            case "rook" -> new Rook(piece.getColor());
-            default -> new Queen(piece.getColor());
-        };
-
-        return newPiece;
     }
 
     private Position getKingPosition(PieceColor color) {
@@ -868,62 +859,28 @@ public class Board {
         return direction;
     }
 
-    public boolean isKingInCheck(Piece attackingPiece) {
-        if (attackingPiece.getColor() == WHITE) {
-            if (attackingPiece.getLegalCaptures(squares, attackingPiece.getCurrentPosition()).contains(blackKingPosition)) {
-                kingInCheck = true;
-                System.out.println("Black king in check");
-                return true;
-            }
-        } else if (attackingPiece.getColor() == BLACK) {
-            if (attackingPiece.getLegalCaptures(squares, attackingPiece.getCurrentPosition()).contains(whiteKingPosition)) {
-                kingInCheck = true;
-                System.out.println("White king in check");
-                return true;
+    boolean hasAnyLegalMove(PieceColor color) {
+        List<Piece> pieces = color == WHITE ? getWhiteArmy(squares) : getBlackArmy(squares);
+
+        for (Piece p : pieces) {
+            Position from = p.getCurrentPosition();
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (isLegalMove(from, new Position(i, j))) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
     }
 
-    public boolean isCheckmated(Position kingPos) {
-        if (lastMove == null) {
-            return false;
-        }
-        List<Position> legalCaptures = new ArrayList<>();
-        boolean legalCaptureFound = false;
-        List<Piece> army = isWhiteToMove() ? getWhiteArmy(squares) : getBlackArmy(squares);
-        for (Piece p : army) {
-            legalCaptures = p.getLegalCaptures(squares, p.getCurrentPosition());
-            if (!legalCaptures.isEmpty()) {
-                legalCaptureFound = true;
-                break;
-            }
-        }
+    boolean isCheckmated(PieceColor color) {
+        return isKingInCheck(color) && !hasAnyLegalMove(color);
+    }
 
-        boolean blockingFound = false;
-        List<Position> legalMoves;
-        List<Position> squaresBetween = getSquaresBetween(lastMove.to(), kingPos);
-        for (Piece p : army) {
-            for (Position pos : squaresBetween) {
-                legalMoves = p.getLegalMoves(squares, p.getCurrentPosition());
-                if (legalMoves.contains(pos)) {
-                    blockingFound = true;
-                    break;
-                }
-            }
-        }
-
-        Piece king = getPieceAt(kingPos);
-        if (isKingInCheck(lastMove.piece())) {
-            if (king.getLegalMoves(squares, king.getCurrentPosition()).isEmpty() &&
-                    king.getLegalCaptures(squares, king.getCurrentPosition()).isEmpty() &&
-                    legalCaptures.isEmpty() &&
-                    !legalCaptureFound &&
-                    !blockingFound) {
-                return true;
-            }
-        }
-        return false;
+    boolean isStalemated(PieceColor color) {
+        return !isKingInCheck(color) && !hasAnyLegalMove(color);
     }
 
     public List<Piece> getWhiteArmy(Piece[][] board) {
@@ -934,8 +891,7 @@ public class Board {
                     continue;
                 }
                 if (board[i][j].getColor() == WHITE) {
-                    Piece p = getPieceAt(new Position(i, j));
-                    whiteArmy.add(p);
+                    whiteArmy.add(board[i][j]);
                 }
             }
         }
@@ -950,8 +906,7 @@ public class Board {
                     continue;
                 }
                 if (board[i][j].getColor() == BLACK) {
-                    Piece p = getPieceAt(new Position(i, j));
-                    blackArmy.add(p);
+                    blackArmy.add(board[i][j]);
                 }
             }
         }
@@ -990,10 +945,6 @@ public class Board {
         return lastMove;
     }
 
-    public void setLastMove(Move move) {
-        this.lastMove = move;
-    }
-
     public boolean isWhiteToMove() {
         return whiteToMove;
     }
@@ -1014,10 +965,6 @@ public class Board {
 
     void setWhiteKingMovedForTest(boolean value) {
         this.whiteKingMoved = value;
-    }
-
-    void setBlackKingMovedForTest(boolean value) {
-        this.blackKingMoved = value;
     }
 
     void setWhiteKingsideRookMovedForTest(boolean value) {

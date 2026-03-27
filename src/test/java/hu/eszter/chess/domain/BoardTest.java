@@ -785,4 +785,104 @@ public class BoardTest {
         assertNull(simulated.getPieceAt(new Position(7, 4)));
         assertNull(simulated.getPieceAt(new Position(7, 7)));
     }
+
+    @Test
+    void en_passant_is_executable_move() {
+        Board b = TestBoard.empty();
+
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn, new Position(3, 1));
+
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn, new Position(1, 0));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(1, 0), new Position(3, 0)));
+        assertTrue(b.tryMove(new Position(3, 1), new Position(2, 0)));
+    }
+
+    @Test
+    void en_passant_removes_captured_pawn() {
+        Board b = TestBoard.empty();
+
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn, new Position(3, 1));
+
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn, new Position(1, 0));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(1, 0), new Position(3, 0)));
+        assertTrue(b.tryMove(new Position(3, 1), new Position(2, 0)));
+        assertNull(b.getPieceAt(new Position(3, 1)));
+        assertNull(b.getPieceAt(new Position(3, 0)));
+        assertEquals(PieceKind.PAWN, b.getPieceAt(new Position(2, 0)).getPieceKind());
+        assertEquals(PieceColor.WHITE, b.getPieceAt(new Position(2, 0)).getColor());
+    }
+
+    @Test
+    void en_passant_is_illegal_without_immediate_previous_double_step() {
+        Board b = TestBoard.empty();
+
+        King whiteKing = new King(PieceColor.WHITE);
+        TestBoard.place(b, whiteKing, new Position(7, 4));
+
+        King blackKing = new King(PieceColor.BLACK);
+        TestBoard.place(b, blackKing, new Position(0, 4));
+
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn, new Position(3, 1));
+
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn, new Position(1, 0));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(1, 0), new Position(3, 0)));
+        assertTrue(b.tryMove(new Position(7, 4), new Position(6, 4)));
+        assertTrue(b.tryMove(new Position(0, 4), new Position(0, 3)));
+
+        assertFalse(b.tryMove(new Position(3, 1), new Position(2, 0)));
+    }
+
+    @Test
+    void pawn_promotes_to_queen() {
+        Board b = TestBoard.empty();
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 1));
+
+        assertTrue(b.tryMove(new Position(1, 1), new Position(0, 1)));
+        assertEquals(PieceKind.QUEEN, b.getPieceAt(new Position(0, 1)).getPieceKind());
+        assertEquals(PieceColor.WHITE, b.getPieceAt(new Position(0, 1)).getColor());
+    }
+
+    @Test
+    void promotion_replaces_pawn() {
+        Board b = TestBoard.empty();
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 1));
+
+        assertTrue(b.tryMove(new Position(1, 1), new Position(0, 1)));
+        assertNull(b.getPieceAt(new Position(1, 1)));
+    }
+
+    @Test
+    void promotion_via_capture() {
+        Board b = TestBoard.empty();
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 1));
+
+        Rook rook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, rook, new Position(0,0));
+
+        assertTrue(b.tryMove(new Position(1, 1), new Position(0, 0)));
+        assertEquals(PieceKind.QUEEN, b.getPieceAt(new Position(0, 0)).getPieceKind());
+        assertEquals(PieceColor.WHITE, b.getPieceAt(new Position(0, 0)).getColor());
+        assertNull(b.getPieceAt(new Position(1, 1)));
+    }
 }

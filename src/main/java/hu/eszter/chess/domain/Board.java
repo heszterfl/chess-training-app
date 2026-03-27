@@ -200,6 +200,42 @@ public class Board {
         int newX = newPos.row();
         int newY = newPos.col();
 
+        if (piece instanceof Pawn && isEnPassantMove(piece, currentPosition, newPos)) {
+
+            Piece toRemove = getPieceAt(new Position(currentPosition.row(), newPos.col()));
+            removed.add(toRemove);
+            toRemove.setCurrentPosition(null);
+            squares[currentPosition.row()][newPos.col()] = null;
+
+            piece.setCurrentPosition(newPos);
+            squares[newX][newY] = piece;
+            squares[currentX][currentY] = null;
+
+            finalizeMove(piece, currentPosition, newPos);
+
+            return;
+        }
+
+        if (piece instanceof Pawn && isPromotionSquare(piece, newPos)) {
+
+            Piece toRemove = getPieceAt(newPos);
+            if (toRemove != null) {
+                removed.add(toRemove);
+                toRemove.setCurrentPosition(null);
+            }
+
+            Piece promoted = new Queen(piece.getColor());
+            promoted.setCurrentPosition(newPos);
+            squares[newX][newY] = promoted;
+
+            piece.setCurrentPosition(null);
+            squares[currentX][currentY] = null;
+
+            finalizeMove(piece, currentPosition, newPos);
+
+            return;
+        }
+
         if (piece instanceof King && isValidCastlingMove(piece, currentPosition, newPos)) {
 
             if (piece.getColor() == WHITE) {
@@ -341,6 +377,25 @@ public class Board {
         int newX = newPos.row();
         int newY = newPos.col();
 
+        if (piece instanceof Pawn && isEnPassantMove(piece, currentPos, newPos)) {
+
+            squares[currentPos.row()][newPos.col()] = null;
+            squares[newX][newY] = piece;
+            squares[currentX][currentY] = null;
+
+            return;
+        }
+
+        if (piece instanceof Pawn && isPromotionSquare(piece, newPos)) {
+
+            // implicit capture: overwritten if exists
+            Piece promoted = new Queen(piece.getColor());
+            squares[newX][newY] = promoted;
+            squares[currentX][currentY] = null;
+
+            return;
+        }
+
         if (piece instanceof King && isValidCastlingMove(piece, currentPos, newPos)) {
 
             if (piece.getColor() == WHITE) {
@@ -434,18 +489,9 @@ public class Board {
 
         boolean targetEmpty = getPieceAt(newPos) == null;
 
-        if (piece instanceof Pawn pawn) {
-            if (targetEmpty) {
-                Position ep = pawn.getEnPassant(getLastMove());
-                if (isPromotionSquare(piece, newPos)) {
-                    return true;
-                } else if (ep != null && ep.equals(newPos)) {
-                    return true;
-                }
-            } else {
-                if (isPromotionSquare(piece, newPos)) {
-                    return true;
-                }
+        if (piece instanceof Pawn) {
+            if (isEnPassantMove(piece, currentPos, newPos)) {
+                return true;
             }
         }
 
@@ -568,6 +614,23 @@ public class Board {
 
     private boolean inbounds(Position pos) {
         return pos.row() >= 0 && pos.row() <= 7 && pos.col() >= 0 && pos.col() <= 7;
+    }
+
+    private boolean isEnPassantMove(Piece piece, Position currentPos, Position newPos) {
+        if (!(piece instanceof Pawn)) {
+            return false;
+        }
+
+        if (squares[newPos.row()][newPos.col()] != null) {
+            return false;
+        }
+
+        Position pos = ((Pawn) piece).getEnPassant(getLastMove());
+        if (pos == null || !pos.equals(newPos)) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean isPromotionSquare(Piece piece, Position to) {

@@ -11,9 +11,7 @@ public class BoardTest {
     @Test
     void king_in_check() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(0, 0));  // a8
-        b.whiteKingPosition = new Position(0, 0);
+        TestBoard.placeKings(b, new Position(0, 0), new Position(0, 7));
 
         Queen queen = new Queen(PieceColor.BLACK);
         TestBoard.place(b, queen, new Position(0, 6)); // g8
@@ -25,16 +23,15 @@ public class BoardTest {
 
 
     @Test
-    void kingInCheck_piece_can_block_on_e3() {
+    void king_in_check_piece_can_block_on_e3() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteBishop = new Bishop(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteBishop, new Position(6, 3));
+        TestBoard.place(b, whiteBishop, new Position(6, 3));    // d2
 
         Piece blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
 
         b.whiteToMove = true;
 
@@ -44,14 +41,13 @@ public class BoardTest {
     @Test
     void king_in_check_piece_cannot_play_non_blocking_move() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteBishop = new Bishop(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteBishop, new Position(6, 3));
+        TestBoard.place(b, whiteBishop, new Position(6, 3));    // d2
 
         Piece blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
 
         b.whiteToMove = true;
 
@@ -61,10 +57,9 @@ public class BoardTest {
     @Test
     void king_in_check_bishop_can_capture_attacker() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteBishop = new Bishop(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));  // e1
         TestBoard.place(b, whiteBishop, new Position(5, 3));    // d3
 
         Piece blackRook = new Rook(PieceColor.BLACK);
@@ -78,9 +73,7 @@ public class BoardTest {
     @Test
     void king_in_check_king_can_capture_attacker() {
         Board b = TestBoard.empty();
-
-        Piece whiteKing = new King(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));  // e1
+        TestBoard.placeDefaultKings(b);
 
         Piece blackRook = new Rook(PieceColor.BLACK);
         TestBoard.place(b, blackRook, new Position(6, 4));  // e2
@@ -93,12 +86,10 @@ public class BoardTest {
     @Test
     void king_in_check_king_can_move_away() {
         Board b = TestBoard.empty();
-
-        Piece whiteKing = new King(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));  // e1
+        TestBoard.placeDefaultKings(b);
 
         Piece blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));  // e8
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
 
         b.whiteToMove = true;
 
@@ -108,14 +99,13 @@ public class BoardTest {
     @Test
     void king_in_double_check_only_king_move_saves() {
         Board b = TestBoard.empty();
-
-        Piece whiteKing = new King(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Piece blackRook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
+
         Piece blackBishop = new Bishop(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
-        TestBoard.place(b, blackBishop, new Position(4, 1));
+        TestBoard.place(b, blackBishop, new Position(4, 1));    // b4
 
         b.whiteToMove = true;
 
@@ -125,16 +115,16 @@ public class BoardTest {
     @Test
     void king_in_double_check_bishop_cannot_capture_an_attacker() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteBishop = new Bishop(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteBishop, new Position(1, 3));
+        TestBoard.place(b, whiteBishop, new Position(1, 3));    // d7
 
         Piece blackRook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
+
         Piece blackBishop = new Bishop(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
-        TestBoard.place(b, blackBishop, new Position(4, 1));
+        TestBoard.place(b, blackBishop, new Position(4, 1));    // b4
 
         b.whiteToMove = true;
 
@@ -144,16 +134,16 @@ public class BoardTest {
     @Test
     void king_in_double_check_rook_cannot_capture_an_attacker() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteRook = new Rook(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteRook, new Position(4, 2));
+        TestBoard.place(b, whiteRook, new Position(4, 2));  // c4
 
         Piece blackRook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
+
         Piece blackBishop = new Bishop(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
-        TestBoard.place(b, blackBishop, new Position(4, 1));
+        TestBoard.place(b, blackBishop, new Position(4, 1));    //b4
 
         b.whiteToMove = true;
 
@@ -163,16 +153,16 @@ public class BoardTest {
     @Test
     void king_in_double_check_bishop_cannot_block_an_attack() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteBishop = new Bishop(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteBishop, new Position(1, 3));
+        TestBoard.place(b, whiteBishop, new Position(1, 3));    // d7
 
         Piece blackRook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
+
         Piece blackBishop = new Bishop(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
-        TestBoard.place(b, blackBishop, new Position(4, 1));
+        TestBoard.place(b, blackBishop, new Position(4, 1));    // b4
 
         b.whiteToMove = true;
 
@@ -182,16 +172,16 @@ public class BoardTest {
     @Test
     void king_in_double_check_rook_cannot_block_an_attack() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteRook = new Rook(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteRook, new Position(4, 2));
+        TestBoard.place(b, whiteRook, new Position(4, 2));  // c4
 
         Piece blackRook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
+
         Piece blackBishop = new Bishop(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
-        TestBoard.place(b, blackBishop, new Position(4, 1));
+        TestBoard.place(b, blackBishop, new Position(4, 1));    // b4
 
         b.whiteToMove = true;
 
@@ -202,14 +192,13 @@ public class BoardTest {
     @Test
     void pinned_piece_cannot_move_aside() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteKnight = new Knight(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteKnight, new Position(6, 4));
+        TestBoard.place(b, whiteKnight, new Position(6, 4));    // e2
 
         Piece blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
 
         b.whiteToMove = true;
 
@@ -219,14 +208,29 @@ public class BoardTest {
     @Test
     void pinned_piece_can_move_if_it_still_blocks() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
-        Piece whiteKing = new King(PieceColor.WHITE);
         Piece whiteRook = new Rook(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteRook, new Position(6, 4));
+        TestBoard.place(b, whiteRook, new Position(6, 4));  // e2
 
         Piece blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
+
+        b.whiteToMove = true;
+
+        assertTrue(b.tryMove(new Position(6, 4), new Position(5, 4)));
+    }
+
+    @Test
+    void pinned_piece_can_capture_attacker() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Piece whiteRook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, whiteRook, new Position(6, 4));  // e2
+
+        Piece blackRook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e8
 
         b.whiteToMove = true;
 
@@ -234,31 +238,12 @@ public class BoardTest {
     }
 
     @Test
-    void pinned_piece_can_capture_attacker() {
-        Board b = TestBoard.empty();
-
-        Piece whiteKing = new King(PieceColor.WHITE);
-        Piece whiteRook = new Rook(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-        TestBoard.place(b, whiteRook, new Position(6, 4));
-
-        Piece blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
-
-        b.whiteToMove = true;
-
-        assertTrue(b.tryMove(new Position(6, 4), new Position(0, 4)));
-    }
-
-    @Test
     void king_cannot_move_into_attack() {
         Board b = TestBoard.empty();
-
-        Piece whiteKing = new King(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 3));
+        TestBoard.placeKings(b, new Position(7, 3), new Position(0, 4));
 
         Piece blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
+        TestBoard.place(b, blackRook, new Position(1, 4));  // e7
 
         b.whiteToMove = true;
 
@@ -268,47 +253,44 @@ public class BoardTest {
     @Test
     void king_checkmated() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(0, 0));
-        b.whiteKingPosition = new Position(0, 0);
+        TestBoard.placeKings(b, new Position(0, 0), new Position(7, 7));
 
         Queen queen = new Queen(PieceColor.BLACK);
-        TestBoard.place(b, queen, new Position(1, 6));
+        TestBoard.place(b, queen, new Position(1, 6));  // g7
+
         Rook rook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, rook, new Position(2, 7));
+        TestBoard.place(b, rook, new Position(2, 7));   // h6
 
         b.whiteToMove = false;
 
         assertTrue(b.tryMove(new Position(2, 7), new Position(0, 7)));
-        assertTrue(b.isCheckmated(king.getColor()));
+        assertTrue(b.isCheckmated(PieceColor.WHITE));
     }
 
     @Test
     void king_stalemated() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.BLACK);
-        TestBoard.place(b, king, new Position(0, 0));
-        b.blackKingPosition = new Position(0, 0);
+        TestBoard.placeKings(b, new Position(0, 0), new Position(7, 7));
 
-        Queen queen = new Queen(PieceColor.WHITE);
-        TestBoard.place(b, queen, new Position(7, 1));
-        Rook rook = new Rook(PieceColor.WHITE);
-        TestBoard.place(b, rook, new Position(2, 7));
+        Queen queen = new Queen(PieceColor.BLACK);
+        TestBoard.place(b, queen, new Position(7, 1));  // b1
 
-        b.whiteToMove = true;
+        Rook rook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, rook, new Position(2, 7));   // h6
+
+        b.whiteToMove = false;
 
         assertTrue(b.tryMove(new Position(2, 7), new Position(1, 7)));
-        assertTrue(b.isStalemated(king.getColor()));
+        assertTrue(b.isStalemated(PieceColor.WHITE));
     }
 
     @Test
     void white_kingside_castling_succeeds() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook rook = new Rook(PieceColor.WHITE);
-        TestBoard.place(b, rook, new Position(7, 7));
+        TestBoard.place(b, rook, new Position(7, 7));   // h1
 
         b.whiteToMove = true;
 
@@ -324,8 +306,7 @@ public class BoardTest {
     @Test
     void white_queenside_castling_succeeds() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook rook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, rook, new Position(7, 0));
@@ -344,14 +325,13 @@ public class BoardTest {
     @Test
     void white_castling_fails_if_king_is_in_check() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook whiteRook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, whiteRook, new Position(7, 7));
 
         Rook blackRook = new Rook(PieceColor.BLACK);
-        TestBoard.place(b, blackRook, new Position(0, 4));
+        TestBoard.place(b, blackRook, new Position(1, 4));
 
         b.whiteToMove = true;
 
@@ -361,8 +341,7 @@ public class BoardTest {
     @Test
     void white_castling_fails_if_path_square_is_attacked() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook whiteRook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, whiteRook, new Position(7, 7));
@@ -379,8 +358,7 @@ public class BoardTest {
     @Test
     void white_castling_fails_if_destination_is_attacked() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook whiteRook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, whiteRook, new Position(7, 7));
@@ -396,8 +374,7 @@ public class BoardTest {
     @Test
     void white_castling_fails_if_piece_is_between_king_and_rook() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook whiteRook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, whiteRook, new Position(7, 7));
@@ -413,8 +390,7 @@ public class BoardTest {
     @Test
     void white_queenside_castling_fails_if_b1_is_occupied() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook whiteRook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, whiteRook, new Position(7, 0));
@@ -430,8 +406,7 @@ public class BoardTest {
     @Test
     void white_castling_fails_if_rook_is_missing() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         b.whiteToMove = true;
 
@@ -441,8 +416,7 @@ public class BoardTest {
     @Test
     void white_castling_fails_if_king_has_already_moved() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook whiteRook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, whiteRook, new Position(7, 7));
@@ -456,8 +430,7 @@ public class BoardTest {
     @Test
     void white_castling_fails_if_rook_has_already_moved() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.WHITE);
-        TestBoard.place(b, king, new Position(7, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook whiteRook = new Rook(PieceColor.WHITE);
         TestBoard.place(b, whiteRook, new Position(7, 7));
@@ -469,10 +442,33 @@ public class BoardTest {
     }
 
     @Test
+    void white_castling_fails_if_rook_has_been_removed() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Rook whiteRook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, whiteRook, new Position(7, 7));
+
+        Bishop whiteBishop = new Bishop(PieceColor.WHITE);
+        TestBoard.place(b, whiteBishop, new Position(6, 6));
+
+        Rook blackRook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, blackRook, new Position(5, 7));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(5, 7), new Position(7, 7)));
+        assertTrue(b.tryMove(new Position(6, 6), new Position(7, 7)));
+        assertTrue(b.tryMove(new Position(0, 4), new Position(1, 4)));
+        assertTrue(b.tryMove(new Position(7, 7), new Position(6, 6)));
+        assertTrue(b.tryMove(new Position(1, 4), new Position(2, 4)));
+        assertFalse(b.tryMove(new Position(7, 4), new Position(7, 6)));
+    }
+
+    @Test
     void black_kingside_castling_succeeds() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.BLACK);
-        TestBoard.place(b, king, new Position(0, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook rook = new Rook(PieceColor.BLACK);
         TestBoard.place(b, rook, new Position(0, 7));
@@ -491,8 +487,7 @@ public class BoardTest {
     @Test
     void black_queenside_castling_succeeds() {
         Board b = TestBoard.empty();
-        King king = new King(PieceColor.BLACK);
-        TestBoard.place(b, king, new Position(0, 4));
+        TestBoard.placeDefaultKings(b);
 
         Rook rook = new Rook(PieceColor.BLACK);
         TestBoard.place(b, rook, new Position(0, 0));
@@ -650,14 +645,12 @@ public class BoardTest {
     @Test
     void custom_position_first_legal_move_succeeds() {
         Board b = TestBoard.empty();
-        King whiteKing = new King(PieceColor.WHITE);
-        Pawn whitePawn = new Pawn(PieceColor.WHITE);
-        King blackKing = new King(PieceColor.BLACK);
-        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+        TestBoard.placeKings(b, new Position(5, 2), new Position(3, 2));
 
-        TestBoard.place(b, whiteKing, new Position(5, 2));
-        TestBoard.place(b, blackKing, new Position(3, 2));
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, whitePawn, new Position(4, 4));
+
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
         TestBoard.place(b, blackPawn, new Position(3, 0));
 
         assertTrue(b.tryMove(new Position(4, 4), new Position(3, 4)));
@@ -679,6 +672,7 @@ public class BoardTest {
     @Test
     void piece_does_not_capture_own_piece() {
         Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(0, 3));
 
         Piece queen = new Queen(PieceColor.WHITE);
         Piece pawn = new Pawn(PieceColor.WHITE);
@@ -692,41 +686,45 @@ public class BoardTest {
     @Test
     void tryMove_returns_true_if_correct_side_wants_to_move() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
         Piece queen = new Queen(PieceColor.WHITE);
 
-        TestBoard.place(b, queen, new Position(4, 4));
+        TestBoard.place(b, queen, new Position(4, 3));
         b.whiteToMove = true;
 
-        assertTrue(b.tryMove(new Position(4, 4), new Position(5, 4)));
+        assertTrue(b.tryMove(new Position(4, 3), new Position(6, 3)));
     }
 
     @Test
     void tryMove_returns_false_if_wrong_side_wants_to_move() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
         Piece queen = new Queen(PieceColor.BLACK);
 
-        TestBoard.place(b, queen, new Position(4, 4));
+        TestBoard.place(b, queen, new Position(4, 3));
         b.whiteToMove = true;
 
-        assertFalse(b.tryMove(new Position(4, 4), new Position(5, 4)));
+        assertFalse(b.tryMove(new Position(4, 3), new Position(1, 3)));
     }
 
     @Test
     void tryMove_returns_false_if_from_equals_to() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
         Piece queen = new Queen(PieceColor.BLACK);
 
-        TestBoard.place(b, queen, new Position(4, 4));
+        TestBoard.place(b, queen, new Position(4, 3));
 
-        assertFalse(b.tryMove(new Position(4, 4), new Position(4, 4)));
+        assertFalse(b.tryMove(new Position(4, 3), new Position(1, 3)));
     }
 
     @Test
     void tryMove_returns_false_if_no_piece_on_currentPos() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
         assertFalse(b.tryMove(new Position(4, 4), new Position(5, 4)));
     }
@@ -734,6 +732,7 @@ public class BoardTest {
     @Test
     void illegal_move_does_not_change_board_state() {
         Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(3, 7), new Position(3, 1));
 
         Piece queen = new Queen(PieceColor.WHITE);
         Piece pawn = new Pawn(PieceColor.WHITE);
@@ -756,11 +755,9 @@ public class BoardTest {
     @Test
     void simulate_and_apply_castling_produce_same_board_state() {
         Board original = TestBoard.empty();
+        TestBoard.placeDefaultKings(original);
 
-        King king = new King(PieceColor.WHITE);
         Rook rook = new Rook(PieceColor.WHITE);
-
-        TestBoard.place(original, king, new Position(7, 4));
         TestBoard.place(original, rook, new Position(7, 7));
 
         original.whiteToMove = true;
@@ -789,6 +786,7 @@ public class BoardTest {
     @Test
     void en_passant_is_executable_move() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
         Pawn whitePawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, whitePawn, new Position(3, 1));
@@ -805,6 +803,7 @@ public class BoardTest {
     @Test
     void en_passant_removes_captured_pawn() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
 
         Pawn whitePawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, whitePawn, new Position(3, 1));
@@ -825,12 +824,7 @@ public class BoardTest {
     @Test
     void en_passant_is_illegal_without_immediate_previous_double_step() {
         Board b = TestBoard.empty();
-
-        King whiteKing = new King(PieceColor.WHITE);
-        TestBoard.place(b, whiteKing, new Position(7, 4));
-
-        King blackKing = new King(PieceColor.BLACK);
-        TestBoard.place(b, blackKing, new Position(0, 4));
+        TestBoard.placeDefaultKings(b);
 
         Pawn whitePawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, whitePawn, new Position(3, 1));
@@ -848,8 +842,29 @@ public class BoardTest {
     }
 
     @Test
-    void pawn_promotes_to_queen() {
+    void en_passant_is_illegal_due_to_pin() {
         Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(5, 4), new Position(0, 7));
+
+        Queen queen = new Queen(PieceColor.BLACK);
+        TestBoard.place(b, queen, new Position(0, 4));
+
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn, new Position(3, 4));
+
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn, new Position(1, 3));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(1, 3), new Position(3, 3)));
+        assertFalse(b.tryMove(new Position(3, 4), new Position(2, 3)));
+    }
+
+    @Test
+    void white_pawn_promotes_to_queen() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(1, 4));
 
         Pawn pawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, pawn, new Position(1, 1));
@@ -860,8 +875,24 @@ public class BoardTest {
     }
 
     @Test
+    void black_pawn_promotes_to_queen() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(6, 4), new Position(0, 4));
+
+        Pawn pawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn, new Position(6, 1));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(6, 1), new Position(7, 1)));
+        assertEquals(PieceKind.QUEEN, b.getPieceAt(new Position(7, 1)).getPieceKind());
+        assertEquals(PieceColor.BLACK, b.getPieceAt(new Position(7, 1)).getColor());
+    }
+
+    @Test
     void promotion_replaces_pawn() {
         Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(1, 4));
 
         Pawn pawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, pawn, new Position(1, 1));
@@ -871,8 +902,9 @@ public class BoardTest {
     }
 
     @Test
-    void promotion_via_capture() {
+    void white_pawn_promotion_via_capture() {
         Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(1, 4));
 
         Pawn pawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, pawn, new Position(1, 1));
@@ -884,5 +916,49 @@ public class BoardTest {
         assertEquals(PieceKind.QUEEN, b.getPieceAt(new Position(0, 0)).getPieceKind());
         assertEquals(PieceColor.WHITE, b.getPieceAt(new Position(0, 0)).getColor());
         assertNull(b.getPieceAt(new Position(1, 1)));
+    }
+
+    @Test
+    void black_pawn_promotion_via_capture() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(6, 4), new Position(0, 4));
+
+        Pawn pawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn, new Position(6, 1));
+
+        Rook rook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook, new Position(7,0));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(6, 1), new Position(7, 0)));
+        assertEquals(PieceKind.QUEEN, b.getPieceAt(new Position(7, 0)).getPieceKind());
+        assertEquals(PieceColor.BLACK, b.getPieceAt(new Position(7, 0)).getColor());
+        assertNull(b.getPieceAt(new Position(6, 1)));
+    }
+
+    @Test
+    void checkmate_after_black_pawn_promotion_via_capture() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 7), new Position(0, 4));
+
+        Pawn whitePawn1 = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn1, new Position(6, 7));
+
+        Pawn whitePawn2 = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn2, new Position(6, 6));
+
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn, new Position(6, 1));
+
+        Rook rook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook, new Position(7,0));
+
+        b.whiteToMove = false;
+
+        assertTrue(b.tryMove(new Position(6, 1), new Position(7, 0)));
+        assertEquals(PieceKind.QUEEN, b.getPieceAt(new Position(7, 0)).getPieceKind());
+        assertEquals(PieceColor.BLACK, b.getPieceAt(new Position(7, 0)).getColor());
+        assertTrue(b.isCheckmate);
     }
 }

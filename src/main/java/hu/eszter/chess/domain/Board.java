@@ -323,6 +323,7 @@ public class Board {
         squares[currentX][currentY] = null;
 
         finalizeMove(piece, currentPosition, newPos);
+        assertKingPositionsConsistent();
     }
 
     void finalizeMove(Piece piece, Position currentPos, Position newPos) {
@@ -976,17 +977,6 @@ public class Board {
         return blackArmy;
     }
 
-    public void moveEnPassant(Piece pawn, Position currentPos, Position newPos) {
-
-        Piece toRemove = getPieceAt(new Position(currentPos.row(), newPos.col()));
-        removed.add(toRemove);
-        squares[currentPos.row()][newPos.col()] = null;
-
-        applyMove(pawn, currentPos, newPos);
-
-        printBoard();
-    }
-
     public void initializeBoard() {
         for (Piece p : whiteArmy) {
             int[] pos = p.getStartingPosition();
@@ -1032,5 +1022,31 @@ public class Board {
 
     void setWhiteKingsideRookMovedForTest(boolean value) {
         this.whiteKingsideRookMoved = value;
+    }
+
+    private void assertKingPositionsConsistent() {
+        Position whiteFound = null;
+        Position blackFound = null;
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Piece p = squares[i][j];
+                if (p instanceof King) {
+                    if (p.getColor() == WHITE) {
+                        whiteFound = new Position(i, j);
+                    } else {
+                        blackFound = new Position(i, j);
+                    }
+                }
+            }
+        }
+
+        if (!Objects.equals(whiteFound, whiteKingPosition)) {
+            throw new IllegalStateException("White king position inconsistent");
+        }
+
+        if (!Objects.equals(blackFound, blackKingPosition)) {
+            throw new IllegalStateException("Black king position inconsistent");
+        }
     }
 }

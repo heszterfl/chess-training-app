@@ -1,5 +1,8 @@
 package hu.eszter.chess.domain;
 
+import static hu.eszter.chess.domain.PieceColor.BLACK;
+import static hu.eszter.chess.domain.PieceColor.WHITE;
+
 final class TestBoard {
 
     private TestBoard() {}
@@ -12,11 +15,43 @@ final class TestBoard {
                 grid[r][c] = null;
             }
         }
+        b.whiteKingPosition = null;
+        b.blackKingPosition = null;
         return b;
     }
 
     static void place(Board b, Piece p, Position pos) {
+
+        if (p instanceof King) {
+            if (p.getColor() == WHITE) {
+                b.whiteKingPosition = pos;
+            } else {
+                b.blackKingPosition = pos;
+            }
+        }
+
         b.getBoard()[pos.row()][pos.col()] = p;
         p.setCurrentPosition(pos);
+    }
+
+    static void placeDefaultKings(Board b) {
+
+        if (b.getPieceAt(new Position(7, 4)) != null ||
+                b.getPieceAt(new Position(0, 4)) != null) {
+            throw new IllegalStateException("Default king squares are occupied");
+        }
+
+        place(b, new King(WHITE), new Position(7, 4));
+        place(b, new King(BLACK), new Position(0, 4));
+    }
+
+    static void placeKings(Board b, Position whitePos, Position blackPos) {
+
+        if (b.getPieceAt(whitePos) != null || b.getPieceAt(blackPos) != null) {
+            throw new IllegalStateException("Squares are occupied");
+        }
+
+        place(b, new King(WHITE), whitePos);
+        place(b, new King(BLACK), blackPos);
     }
 }

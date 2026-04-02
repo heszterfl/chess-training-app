@@ -75,11 +75,7 @@ public class SanMoveResolver {
     private PieceKind getPieceKind(String sanToken) {
         char first = sanToken.charAt(0);
         if (Character.isLowerCase(first)) {
-            if (!sanToken.contains("x")) {
-                return PieceKind.PAWN;
-            } else {
-                throw new IllegalArgumentException("Invalid token");
-            }
+            return PieceKind.PAWN;
         }
 
         return switch (first) {

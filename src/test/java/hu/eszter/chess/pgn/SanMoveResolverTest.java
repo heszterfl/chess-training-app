@@ -67,6 +67,41 @@ public class SanMoveResolverTest {
     }
 
     @Test
+    void resolve_pawn_capture() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(4, 4));
+
+        Knight knight = new Knight(PieceColor.BLACK);
+        TestBoard.place(b, knight, new Position(3, 3));
+
+        String token = "exd5";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(4, 4), move.from());
+        assertEquals(new Position(3, 3), move.to());
+        assertEquals(PieceKind.PAWN, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_pawn_capture_throws_if_no_candidate_exists() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(4, 4));
+
+        String token = "exd5";
+
+        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
+    }
+
+    @Test
     void resolve_ignores_check_suffix() {
         Board b = TestBoard.empty();
         TestBoard.placeDefaultKings(b);
@@ -118,22 +153,6 @@ public class SanMoveResolverTest {
         TestBoard.place(b, queen, new Position(4, 3));
 
         String token = "Qb3";
-
-        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
-    }
-
-    @Test
-    void resolve_throws_if_pawn_captures() {
-        Board b = TestBoard.empty();
-        TestBoard.placeDefaultKings(b);
-
-        Pawn pawn = new Pawn(PieceColor.WHITE);
-        TestBoard.place(b, pawn, new Position(4, 4));
-
-        Knight knight = new Knight(PieceColor.BLACK);
-        TestBoard.place(b, knight, new Position(3, 5));
-
-        String token = "exf5";
 
         assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
     }

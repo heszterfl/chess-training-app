@@ -156,4 +156,22 @@ public class SanMoveResolverTest {
 
         assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
     }
+
+    @Test
+    void resolve_throws_if_pawn_token_invalid() {
+        Board b = new Board();
+
+        String token = "i4";
+
+        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
+    }
+
+    @Test
+    void resolve_throws_if_piece_token_invalid() {
+        Board b = new Board();
+
+        String token = "A3";
+
+        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
+    }
 }

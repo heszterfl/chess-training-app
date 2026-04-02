@@ -26,6 +26,11 @@ public class SanMoveResolver {
             throw new IllegalArgumentException("Invalid token");
         }
 
+        if (!isPawnMoveToken(normalized) && !isPawnCaptureToken(normalized) &&
+        !isPieceMoveToken(normalized) && !isPieceCaptureToken(normalized)) {
+            throw new IllegalArgumentException("Invalid token");
+        }
+
         List<Piece> candidates = new ArrayList<>();
         PieceKind pieceKind = getPieceKind(normalized);
         String targetSquare = getTargetSquare(normalized);
@@ -93,4 +98,23 @@ public class SanMoveResolver {
         return sanToken.substring(length-2, length);
     }
 
+    private boolean isPawnMoveToken(String token) {
+
+        return token.matches("[a-h][1-8]");
+    }
+
+    private boolean isPawnCaptureToken(String token) {
+
+        return token.matches("[a-h]x[a-h][1-8]");
+    }
+
+    private boolean isPieceMoveToken(String token) {
+
+        return token.matches("[BKNQR][a-h][1-8]");
+    }
+
+    private boolean isPieceCaptureToken(String token) {
+
+        return token.matches("[BKNQR]x[a-h][1-8]");
+    }
 }

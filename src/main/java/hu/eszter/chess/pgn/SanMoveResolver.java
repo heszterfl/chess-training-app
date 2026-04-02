@@ -26,8 +26,13 @@ public class SanMoveResolver {
             throw new IllegalArgumentException("Invalid token");
         }
 
-        if (!isPawnMoveToken(normalized) && !isPawnCaptureToken(normalized) &&
-        !isPieceMoveToken(normalized) && !isPieceCaptureToken(normalized)) {
+        boolean isPawnMove = isPawnMoveToken(normalized);
+        boolean isPawnCapture = isPawnCaptureToken(normalized);
+        boolean isPieceMove = isPieceMoveToken(normalized);
+        boolean isPieceCapture = isPieceCaptureToken(normalized);
+
+        if (!isPawnMove && !isPawnCapture &&
+        !isPieceMove && !isPieceCapture) {
             throw new IllegalArgumentException("Invalid token");
         }
 
@@ -35,6 +40,11 @@ public class SanMoveResolver {
         PieceKind pieceKind = getPieceKind(normalized);
         String targetSquare = getTargetSquare(normalized);
         Position targetPosition = SquareNotation.fromSquare(targetSquare);
+        int sourceFileCol = -1;
+
+        if (isPawnCapture) {
+            sourceFileCol = getPawnCaptureSourceFile(normalized);
+        }
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -50,6 +60,9 @@ public class SanMoveResolver {
                                 Piece targetPiece = board.getPieceAt(targetPosition);
                                 if ((targetPiece != null) &&
                                         (targetPiece.getColor() != piece.getColor())) {
+                                    if (isPawnCapture && sourceFileCol != piece.getCurrentPosition().col()) {
+                                        continue;
+                                    }
                                     candidates.add(piece);
                                 }
                             }
@@ -96,6 +109,22 @@ public class SanMoveResolver {
     private String getTargetSquare(String sanToken) {
         int length = sanToken.length();
         return sanToken.substring(length-2, length);
+    }
+
+    private int getPawnCaptureSourceFile(String token) {
+
+        char first = token.charAt(0);
+        return switch (first) {
+          case 'a' -> 0;
+          case 'b' -> 1;
+          case 'c' -> 2;
+          case 'd' -> 3;
+          case 'e' -> 4;
+          case 'f' -> 5;
+          case 'g' -> 6;
+          case 'h' -> 7;
+          default -> throw new IllegalStateException();
+        };
     }
 
     private boolean isPawnMoveToken(String token) {

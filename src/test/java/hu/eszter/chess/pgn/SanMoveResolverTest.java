@@ -102,6 +102,56 @@ public class SanMoveResolverTest {
     }
 
     @Test
+    void resolve_pawn_capture_with_two_options_chooses_correct_pawn_on_e_file() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn1 = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn1, new Position(4, 2));
+
+        Pawn pawn2 = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn2, new Position(4, 4));
+
+        Knight knight = new Knight(PieceColor.BLACK);
+        TestBoard.place(b, knight, new Position(3, 3));
+
+        String token = "exd5";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(4, 4), move.from());
+        assertEquals(new Position(3, 3), move.to());
+        assertEquals(PieceKind.PAWN, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_pawn_capture_with_two_options_chooses_correct_pawn_on_c_file() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn1 = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn1, new Position(4, 2));
+
+        Pawn pawn2 = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn2, new Position(4, 4));
+
+        Knight knight = new Knight(PieceColor.BLACK);
+        TestBoard.place(b, knight, new Position(3, 3));
+
+        String token = "cxd5";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(4, 2), move.from());
+        assertEquals(new Position(3, 3), move.to());
+        assertEquals(PieceKind.PAWN, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
     void resolve_ignores_check_suffix() {
         Board b = TestBoard.empty();
         TestBoard.placeDefaultKings(b);

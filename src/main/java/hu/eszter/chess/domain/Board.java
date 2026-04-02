@@ -1024,6 +1024,54 @@ public class Board {
         this.whiteKingsideRookMoved = value;
     }
 
+    public void placePieceForSetup(Piece piece, Position position) {
+
+        if (piece == null) {
+            throw new IllegalArgumentException("Piece cannot be null");
+        }
+
+        if (position == null) {
+            throw new IllegalArgumentException("Position cannot be null");
+        }
+
+        if (this.getPieceAt(position) != null) {
+            throw new IllegalStateException("Square is occupied");
+        }
+
+        squares[position.row()][position.col()] = piece;
+        piece.setCurrentPosition(position);
+        if (piece instanceof King) {
+            if (piece.getColor() == WHITE) {
+                this.whiteKingPosition = position;
+            } else {
+                this.blackKingPosition = position;
+            }
+        }
+    }
+
+    public void clearSquareForSetup(Position position) {
+
+        if (position == null) {
+            throw new IllegalArgumentException("Position cannot be null");
+        }
+
+        Piece piece = getPieceAt(position);
+
+        if (piece != null) {
+            piece.setCurrentPosition(null);
+
+            if (piece instanceof King) {
+                if (piece.getColor() == WHITE) {
+                    this.whiteKingPosition = null;
+                } else {
+                    this.blackKingPosition = null;
+                }
+            }
+        }
+
+        squares[position.row()][position.col()] = null;
+    }
+
     private void assertKingPositionsConsistent() {
         Position whiteFound = null;
         Position blackFound = null;

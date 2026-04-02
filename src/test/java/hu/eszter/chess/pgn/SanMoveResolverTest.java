@@ -1,6 +1,7 @@
 package hu.eszter.chess.pgn;
 
 import hu.eszter.chess.domain.*;
+import hu.eszter.chess.testutil.TestBoard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

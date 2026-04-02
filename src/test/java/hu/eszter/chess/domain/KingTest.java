@@ -1,5 +1,6 @@
 package hu.eszter.chess.domain;
 
+import hu.eszter.chess.testutil.TestBoard;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

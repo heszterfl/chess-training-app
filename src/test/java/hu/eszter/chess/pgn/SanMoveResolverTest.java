@@ -46,10 +46,14 @@ public class SanMoveResolverTest {
     @Test
     void resolve_piece_capture() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
         Queen queen = new Queen(PieceColor.WHITE);
         TestBoard.place(b, queen, new Position(4, 3));
+
         Knight knight = new Knight(PieceColor.BLACK);
         TestBoard.place(b, knight, new Position(3, 3));
+
         String token = "Qxd5";
 
         Move move = sanMoveResolver.resolve(token, b);
@@ -64,12 +68,12 @@ public class SanMoveResolverTest {
     @Test
     void resolve_ignores_check_suffix() {
         Board b = TestBoard.empty();
-        Queen queen = new Queen(PieceColor.WHITE);
-        King king = new King(PieceColor.BLACK);
-        TestBoard.place(b, queen, new Position(4, 3));
-        TestBoard.place(b, king, new Position(7, 4));
-        String token = "Qe4+";
+        TestBoard.placeDefaultKings(b);
 
+        Queen queen = new Queen(PieceColor.WHITE);
+        TestBoard.place(b, queen, new Position(4, 3));
+
+        String token = "Qe4+";
 
         Move move = sanMoveResolver.resolve(token, b);
 
@@ -91,10 +95,14 @@ public class SanMoveResolverTest {
     @Test
     void resolve_throws_for_ambiguous_move() {
         Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(6, 4), new Position(1, 4));
+
         Rook rook1 = new Rook(PieceColor.WHITE);
-        Rook rook8 = new Rook(PieceColor.WHITE);
         TestBoard.place(b, rook1, new Position(7,7));
+
+        Rook rook8 = new Rook(PieceColor.WHITE);
         TestBoard.place(b, rook8, new Position(0, 7));
+
         String token = "Rh5";
 
         assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
@@ -103,8 +111,11 @@ public class SanMoveResolverTest {
     @Test
     void resolve_throws_if_no_candidate_exists() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
         Queen queen = new Queen(PieceColor.WHITE);
         TestBoard.place(b, queen, new Position(4, 3));
+
         String token = "Qb3";
 
         assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
@@ -113,10 +124,14 @@ public class SanMoveResolverTest {
     @Test
     void resolve_throws_if_pawn_captures() {
         Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
         Pawn pawn = new Pawn(PieceColor.WHITE);
         TestBoard.place(b, pawn, new Position(4, 4));
+
         Knight knight = new Knight(PieceColor.BLACK);
         TestBoard.place(b, knight, new Position(3, 5));
+
         String token = "exf5";
 
         assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));

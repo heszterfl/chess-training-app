@@ -36,10 +36,13 @@ public class SanMoveResolver {
         boolean isPieceCapture = isPieceCaptureToken(normalized);
         boolean isPieceMoveWithFileDisambiguation = isPieceMoveWithFileDisambiguationToken(normalized);
         boolean isPieceCaptureWithFileDisambiguation = isPieceCaptureWithFileDisambiguationToken(normalized);
+        boolean isPieceMoveWithRankDisambiguation = isPieceMoveWithRankDisambiguationToken(normalized);
+        boolean isPieceCaptureWithRankDisambiguation = isPieceCaptureWithRankDisambiguationToken(normalized);
 
         if (!isPawnMove && !isPawnCapture &&
                 !isPieceMove && !isPieceCapture &&
-                !isPieceMoveWithFileDisambiguation && !isPieceCaptureWithFileDisambiguation) {
+                !isPieceMoveWithFileDisambiguation && !isPieceCaptureWithFileDisambiguation &&
+                !isPieceMoveWithRankDisambiguation && !isPieceCaptureWithRankDisambiguation) {
             throw new IllegalArgumentException("Invalid token");
         }
 
@@ -48,6 +51,7 @@ public class SanMoveResolver {
         String targetSquare = getTargetSquare(normalized);
         Position targetPosition = SquareNotation.fromSquare(targetSquare);
         int sourceFileCol = -1;
+        int sourceRankRow = -1;
 
         if (isPawnCapture) {
             sourceFileCol = getPawnCaptureSourceFile(normalized);
@@ -55,6 +59,10 @@ public class SanMoveResolver {
 
         if (isPieceMoveWithFileDisambiguation || isPieceCaptureWithFileDisambiguation) {
             sourceFileCol = getPieceSourceFileCol(normalized);
+        }
+
+        if (isPieceMoveWithRankDisambiguation || isPieceCaptureWithRankDisambiguation) {
+            sourceRankRow = getPieceSourceRankRow(normalized);
         }
 
         for (int i = 0; i < 8; i++) {
@@ -69,6 +77,9 @@ public class SanMoveResolver {
                                 if (isPieceMoveWithFileDisambiguation && sourceFileCol != piece.getCurrentPosition().col()) {
                                     continue;
                                 }
+                                if (isPieceMoveWithRankDisambiguation && sourceRankRow != piece.getCurrentPosition().row()) {
+                                    continue;
+                                }
                                 candidates.add(piece);
                             } else {
                                 Piece targetPiece = board.getPieceAt(targetPosition);
@@ -76,7 +87,11 @@ public class SanMoveResolver {
                                         (targetPiece.getColor() != piece.getColor())) {
                                     if (isPawnCapture && sourceFileCol != piece.getCurrentPosition().col()) {
                                         continue;
-                                    } else if (isPieceCaptureWithFileDisambiguation && sourceFileCol != piece.getCurrentPosition().col()) {
+                                    }
+                                    if (isPieceCaptureWithFileDisambiguation && sourceFileCol != piece.getCurrentPosition().col()) {
+                                        continue;
+                                    }
+                                    if (isPieceCaptureWithRankDisambiguation && sourceRankRow != piece.getCurrentPosition().row()) {
                                         continue;
                                     }
                                     candidates.add(piece);
@@ -185,6 +200,12 @@ public class SanMoveResolver {
         };
     }
 
+    private int getPieceSourceRankRow(String token) {
+
+        int second = Integer.parseInt(token.substring(1,2));
+        return 8 - second;
+    }
+
     private boolean isPawnMoveToken(String token) {
 
         return token.matches("[a-h][1-8]");
@@ -223,5 +244,15 @@ public class SanMoveResolver {
     private boolean isPieceCaptureWithFileDisambiguationToken(String token) {
 
         return token.matches("[BKNQR][a-h]x[a-h][1-8]");
+    }
+
+    private boolean isPieceMoveWithRankDisambiguationToken(String token) {
+
+        return token.matches("[BKNQR][1-8][a-h][1-8]");
+    }
+
+    private boolean isPieceCaptureWithRankDisambiguationToken(String token) {
+
+        return token.matches("[BKNQR][1-8]x[a-h][1-8]");
     }
 }

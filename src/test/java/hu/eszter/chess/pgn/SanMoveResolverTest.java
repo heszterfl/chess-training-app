@@ -302,4 +302,89 @@ public class SanMoveResolverTest {
 
         assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
     }
+
+    @Test
+    void resolve_Nbd2_chooses_knight_on_b_file() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Knight knight1 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight1, new Position(7, 1));
+
+        Knight knight2 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight2,new Position(5, 5));
+
+        String token = "Nbd2";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(7, 1), move.from());
+        assertEquals(new Position(6, 3), move.to());
+        assertEquals(PieceKind.KNIGHT, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_Nfd2_chooses_knight_on_f_file() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Knight knight1 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight1, new Position(7, 1));
+
+        Knight knight2 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight2,new Position(5, 5));
+
+        String token = "Nfd2";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(5, 5), move.from());
+        assertEquals(new Position(6, 3), move.to());
+        assertEquals(PieceKind.KNIGHT, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_Raxc2_chooses_rook_on_a_file() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Rook rook1 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook1, new Position(6, 0));
+
+        Rook rook2 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook2, new Position(6, 7));
+
+        Bishop bishop = new Bishop(PieceColor.BLACK);
+        TestBoard.place(b, bishop, new Position(6, 2));
+
+        String token = "Raxc2";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(6, 0), move.from());
+        assertEquals(new Position(6, 2), move.to());
+        assertEquals(PieceKind.ROOK, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_throws_if_no_legal_piece_exists_on_source_file() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Rook rook1 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook1, new Position(6, 1));
+
+        Rook rook2 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook2, new Position(6, 7));
+
+        String token = "Rac2";
+
+        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
+    }
 }

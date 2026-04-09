@@ -26,7 +26,7 @@ public class SanMoveResolver {
 
         if ((normalized.contains("O")) ||
                 (normalized.contains("=")) ||
-                (normalized.length() > 3 && !normalized.contains("x"))) {
+                (normalized.length() > 4 && !normalized.contains("x"))) {
             throw new IllegalArgumentException("Invalid token");
         }
 
@@ -34,9 +34,12 @@ public class SanMoveResolver {
         boolean isPawnCapture = isPawnCaptureToken(normalized);
         boolean isPieceMove = isPieceMoveToken(normalized);
         boolean isPieceCapture = isPieceCaptureToken(normalized);
+        boolean isPieceMoveWithFileDisambiguation = isPieceMoveWithFileDisambiguationToken(normalized);
+        boolean isPieceCaptureWithFileDisambiguation = isPieceCaptureWithFileDisambiguationToken(normalized);
 
         if (!isPawnMove && !isPawnCapture &&
-        !isPieceMove && !isPieceCapture) {
+                !isPieceMove && !isPieceCapture &&
+                !isPieceMoveWithFileDisambiguation && !isPieceCaptureWithFileDisambiguation) {
             throw new IllegalArgumentException("Invalid token");
         }
 
@@ -50,6 +53,10 @@ public class SanMoveResolver {
             sourceFileCol = getPawnCaptureSourceFile(normalized);
         }
 
+        if (isPieceMoveWithFileDisambiguation || isPieceCaptureWithFileDisambiguation) {
+            sourceFileCol = getPieceSourceFileCol(normalized);
+        }
+
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Piece piece = board.getBoard()[i][j];
@@ -59,12 +66,17 @@ public class SanMoveResolver {
                             (!board.isWhiteToMove() && piece.getColor() == PieceColor.BLACK)) {
                         if (board.getIsLegalMove(piece.getCurrentPosition(), targetPosition)) {
                             if (!normalized.contains("x")) {
+                                if (isPieceMoveWithFileDisambiguation && sourceFileCol != piece.getCurrentPosition().col()) {
+                                    continue;
+                                }
                                 candidates.add(piece);
                             } else {
                                 Piece targetPiece = board.getPieceAt(targetPosition);
                                 if ((targetPiece != null) &&
                                         (targetPiece.getColor() != piece.getColor())) {
                                     if (isPawnCapture && sourceFileCol != piece.getCurrentPosition().col()) {
+                                        continue;
+                                    } else if (isPieceCaptureWithFileDisambiguation && sourceFileCol != piece.getCurrentPosition().col()) {
                                         continue;
                                     }
                                     candidates.add(piece);
@@ -157,6 +169,22 @@ public class SanMoveResolver {
         };
     }
 
+    private int getPieceSourceFileCol(String token) {
+
+        char second = token.charAt(1);
+        return switch (second) {
+            case 'a' -> 0;
+            case 'b' -> 1;
+            case 'c' -> 2;
+            case 'd' -> 3;
+            case 'e' -> 4;
+            case 'f' -> 5;
+            case 'g' -> 6;
+            case 'h' -> 7;
+            default -> throw new IllegalStateException();
+        };
+    }
+
     private boolean isPawnMoveToken(String token) {
 
         return token.matches("[a-h][1-8]");
@@ -185,5 +213,15 @@ public class SanMoveResolver {
     private boolean isQueensideCastlingToken(String token) {
 
         return token.equals("O-O-O");
+    }
+
+    private boolean isPieceMoveWithFileDisambiguationToken(String token) {
+
+        return token.matches("[BKNQR][a-h][a-h][1-8]");
+    }
+
+    private boolean isPieceCaptureWithFileDisambiguationToken(String token) {
+
+        return token.matches("[BKNQR][a-h]x[a-h][1-8]");
     }
 }

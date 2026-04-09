@@ -472,4 +472,90 @@ public class SanMoveResolverTest {
 
         assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
     }
+
+    @Test
+    void resolve_white_pawn_promotion() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(1, 4));
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 0));
+
+        String token = "a8=Q";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(1, 0), move.from());
+        assertEquals(new Position(0, 0), move.to());
+        assertEquals(PieceKind.PAWN, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_white_capture_promotion() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 0));
+
+        Rook rook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, rook, new Position(0, 1));
+
+        String token = "axb8=Q";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(1, 0), move.from());
+        assertEquals(new Position(0, 1), move.to());
+        assertEquals(PieceKind.PAWN, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_promotion_ignores_check_suffix() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 0));
+
+        String token = "a8=Q+";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(1, 0), move.from());
+        assertEquals(new Position(0, 0), move.to());
+        assertEquals(PieceKind.PAWN, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_promotion_throws_if_no_candidate_exists() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 1));
+
+        String token = "a8=Q+";
+
+        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
+    }
+
+    @Test
+    void resolve_throws_for_non_queen_promotion() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1, 0));
+
+        String token = "a8=N";
+
+        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
+    }
 }

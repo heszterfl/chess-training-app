@@ -25,7 +25,6 @@ public class SanMoveResolver {
         }
 
         if ((normalized.contains("O")) ||
-                (normalized.contains("=")) ||
                 (normalized.length() > 4 && !normalized.contains("x"))) {
             throw new IllegalArgumentException("Invalid token");
         }
@@ -38,18 +37,29 @@ public class SanMoveResolver {
         boolean isPieceCaptureWithFileDisambiguation = isPieceCaptureWithFileDisambiguationToken(normalized);
         boolean isPieceMoveWithRankDisambiguation = isPieceMoveWithRankDisambiguationToken(normalized);
         boolean isPieceCaptureWithRankDisambiguation = isPieceCaptureWithRankDisambiguationToken(normalized);
+        boolean isPromotion = isPromotionToken(normalized);
+        boolean isCapturePromotion = isCapturePromotionToken(normalized);
 
         if (!isPawnMove && !isPawnCapture &&
                 !isPieceMove && !isPieceCapture &&
                 !isPieceMoveWithFileDisambiguation && !isPieceCaptureWithFileDisambiguation &&
-                !isPieceMoveWithRankDisambiguation && !isPieceCaptureWithRankDisambiguation) {
+                !isPieceMoveWithRankDisambiguation && !isPieceCaptureWithRankDisambiguation &&
+                !isPromotion && !isCapturePromotion) {
             throw new IllegalArgumentException("Invalid token");
         }
 
         List<Piece> candidates = new ArrayList<>();
         PieceKind pieceKind = getPieceKind(normalized);
-        String targetSquare = getTargetSquare(normalized);
+
+        String targetSquare;
+        if (isPromotion || isCapturePromotion) {
+            targetSquare = normalized.substring(normalized.length()-4, normalized.length()-2);
+        } else {
+            targetSquare = getTargetSquare(normalized);
+        }
+
         Position targetPosition = SquareNotation.fromSquare(targetSquare);
+
         int sourceFileCol = -1;
         int sourceRankRow = -1;
 
@@ -64,6 +74,8 @@ public class SanMoveResolver {
         if (isPieceMoveWithRankDisambiguation || isPieceCaptureWithRankDisambiguation) {
             sourceRankRow = getPieceSourceRankRow(normalized);
         }
+
+
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -254,5 +266,15 @@ public class SanMoveResolver {
     private boolean isPieceCaptureWithRankDisambiguationToken(String token) {
 
         return token.matches("[BKNQR][1-8]x[a-h][1-8]");
+    }
+
+    private boolean isPromotionToken(String token) {
+
+        return token.matches("[a-h][1-8]=Q");
+    }
+
+    private boolean isCapturePromotionToken(String token) {
+
+        return token.matches("[a-h]x[a-h][1-8]=Q");
     }
 }

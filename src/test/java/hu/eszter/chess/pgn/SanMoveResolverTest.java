@@ -171,6 +171,84 @@ public class SanMoveResolverTest {
     }
 
     @Test
+    void resolve_white_kingside_castling() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Rook whiteRook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, whiteRook, new Position(7,7));
+
+        String token = "O-O";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(7, 4), move.from());
+        assertEquals(new Position(7, 6), move.to());
+        assertEquals(PieceKind.KING, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_white_queenside_castling() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Rook whiteRook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, whiteRook, new Position(7,0));
+
+        String token = "O-O-O";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(7, 4), move.from());
+        assertEquals(new Position(7, 2), move.to());
+        assertEquals(PieceKind.KING, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
+    void resolve_throws_if_white_kingside_castling_not_legal() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Rook whiteRook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, whiteRook, new Position(7,7));
+
+        Bishop whiteBishop = new Bishop(PieceColor.WHITE);
+        TestBoard.place(b, whiteBishop, new Position(7, 5));
+
+        String token = "O-O";
+
+        assertThrows(IllegalArgumentException.class, () -> sanMoveResolver.resolve(token, b));
+    }
+
+    @Test
+    void resolve_ignores_check_suffix_for_castling() {
+        Board b = TestBoard.empty();
+
+        King whiteKing = new King(PieceColor.WHITE);
+        TestBoard.place(b, whiteKing, new Position(7, 4));
+
+        Rook whiteRook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, whiteRook, new Position(7,7));
+
+        King blackKing = new King(PieceColor.BLACK);
+        TestBoard.place(b, blackKing, new Position(0, 5));
+
+        String token = "O-O+";
+
+        Move move = sanMoveResolver.resolve(token, b);
+
+        assertNotNull(move);
+        assertEquals(new Position(7, 4), move.from());
+        assertEquals(new Position(7, 6), move.to());
+        assertEquals(PieceKind.KING, move.piece().getPieceKind());
+        assertEquals(PieceColor.WHITE, move.color());
+    }
+
+    @Test
     void resolve_throws_for_castling() {
         Board b = TestBoard.empty();
         String token = "O-O";

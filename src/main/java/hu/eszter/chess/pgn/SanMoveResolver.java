@@ -20,6 +20,10 @@ public class SanMoveResolver {
 
         String normalized = clean(sanToken);
 
+        if (isKingsideCastlingToken(normalized) || isQueensideCastlingToken(normalized)) {
+            return resolveCastling(normalized, board);
+        }
+
         if ((normalized.contains("O")) ||
                 (normalized.contains("=")) ||
                 (normalized.length() > 3 && !normalized.contains("x"))) {
@@ -78,6 +82,32 @@ public class SanMoveResolver {
         } else {
             throw new IllegalArgumentException("Move cannot be created");
         }
+    }
+
+    private Move resolveCastling(String sanToken, Board b) {
+
+        PieceColor sideToMove = b.isWhiteToMove() ? PieceColor.WHITE : PieceColor.BLACK;
+        Position from = sideToMove == PieceColor.WHITE ? new Position(7, 4) : new Position(0, 4);
+
+        Piece piece = b.getPieceAt(from);
+
+        if (piece == null || (!(piece instanceof King) || piece.getColor() != sideToMove)) {
+            throw new IllegalArgumentException("Invalid piece/color");
+        }
+
+        if (isKingsideCastlingToken(sanToken)) {
+            Position to = sideToMove == PieceColor.WHITE ? new Position(7, 6) : new Position(0, 6);
+            if (b.getIsLegalMove(from, to)) {
+                return new Move(piece, sideToMove, from, to);
+            }
+        } else if (isQueensideCastlingToken(sanToken)) {
+            Position to = sideToMove == PieceColor.WHITE ? new Position(7, 2) : new Position(0, 2);
+            if (b.getIsLegalMove(from, to)) {
+                return new Move(piece, sideToMove, from, to);
+            }
+        }
+
+        throw new IllegalArgumentException("Move cannot be created");
     }
 
     private String clean(String sanToken) {
@@ -145,5 +175,15 @@ public class SanMoveResolver {
     private boolean isPieceCaptureToken(String token) {
 
         return token.matches("[BKNQR]x[a-h][1-8]");
+    }
+
+    private boolean isKingsideCastlingToken(String token) {
+
+        return token.equals("O-O");
+    }
+
+    private boolean isQueensideCastlingToken(String token) {
+
+        return token.equals("O-O-O");
     }
 }

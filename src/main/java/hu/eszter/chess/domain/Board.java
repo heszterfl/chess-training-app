@@ -1097,4 +1097,12 @@ public class Board {
             throw new IllegalStateException("Black king position inconsistent");
         }
     }
+
+    public boolean isInCheck(PieceColor color) {
+        return isKingInCheck(color);
+    }
+
+    public boolean isCheckmate(PieceColor color) {
+        return isCheckmated(color);
+    }
 }

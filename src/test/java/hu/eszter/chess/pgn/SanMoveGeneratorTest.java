@@ -154,4 +154,87 @@ public class SanMoveGeneratorTest {
 
         assertEquals("axb8=Q", sanToken);
     }
+
+    @Test
+    void toSan_generates_check_suffix_for_piece_move() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Queen queen = new Queen(PieceColor.WHITE);
+        TestBoard.place(b, queen, new Position(3, 4));
+
+        Move move = new Move(queen, PieceColor.WHITE, new Position(3, 4), new Position(4, 4));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("Qe4+", sanToken);
+    }
+
+    @Test
+    void toSan_generates_checkmate_suffix_for_piece_move() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(0, 6));
+
+        Pawn pawn1 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn1, new Position(1, 5));
+
+        Pawn pawn2 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn2, new Position(1, 6));
+
+        Pawn pawn3 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn3, new Position(1, 7));
+
+        Rook rook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook, new Position(7, 3));
+
+        Move move = new Move(rook, PieceColor.WHITE, new Position(7, 3), new Position(0, 3));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("Rd8#", sanToken);
+    }
+
+    @Test
+    void toSan_generates_check_suffix_for_castling() {
+        Board b = TestBoard.empty();
+
+        King whiteKing = new King(PieceColor.WHITE);
+        TestBoard.place(b, whiteKing, new Position(7, 4));
+
+        Rook rook = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook, new Position(7, 7));
+
+        King blackKing = new King(PieceColor.BLACK);
+        TestBoard.place(b, blackKing, new Position(0, 5));
+
+        Move move = new Move(whiteKing, PieceColor.WHITE, new Position(7, 4), new Position(7, 6));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("O-O+", sanToken);
+    }
+
+    @Test
+    void toSan_generates_checkmate_suffix_for_promotion() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(0, 6));
+
+        Pawn pawn1 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn1, new Position(1, 5));
+
+        Pawn pawn2 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn2, new Position(1, 6));
+
+        Pawn pawn3 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, pawn3, new Position(1, 7));
+
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn, new Position(1, 0));
+
+        Move move = new Move(whitePawn, PieceColor.WHITE, new Position(1, 0), new Position(0, 0));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("a8=Q#", sanToken);
+    }
 }

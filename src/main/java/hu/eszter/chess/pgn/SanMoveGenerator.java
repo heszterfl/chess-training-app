@@ -7,17 +7,15 @@ public class SanMoveGenerator {
 
     public String toSan(Board boardBeforeMove, Move move) {
 
+        String sanToken = "";
+        String pieceLetter = getPieceLetter(move.piece());
+        String targetSquare = getTargetSquare(move.to());
+
         if (isKingsideCastlingMove(move)) {
-            return "O-O";
-        }
-
-        if (isQueensideCastlingMove(move)) {
-            return "O-O-O";
-        }
-
-        if (move.piece() instanceof Pawn) {
-
-            String sanToken = "";
+            sanToken = "O-O";
+        } else if (isQueensideCastlingMove(move)) {
+            sanToken = "O-O-O";
+        } else if (move.piece() instanceof Pawn) {
 
             String sourceFile = switch (move.from().col()) {
                 case 0 -> "a";
@@ -31,7 +29,7 @@ public class SanMoveGenerator {
                 default -> throw new IllegalArgumentException();
             };
 
-            String targetSquare = getTargetSquare(move.to());
+            targetSquare = getTargetSquare(move.to());
 
             if (isCaptureMove(boardBeforeMove, move)) {
                 sanToken = sourceFile + "x" + targetSquare;
@@ -42,18 +40,25 @@ public class SanMoveGenerator {
             if (isPromotionMove(move)) {
                 sanToken = sanToken + "=Q";
             }
-
-            return sanToken;
-        }
-
-        String pieceLetter = getPieceLetter(move.piece());
-        String targetSquare = getTargetSquare(move.to());
-
-        if (isCaptureMove(boardBeforeMove, move)) {
-            return pieceLetter + "x" + targetSquare;
+        } else if (isCaptureMove(boardBeforeMove, move)) {
+            sanToken = pieceLetter + "x" + targetSquare;
         } else {
-            return pieceLetter + targetSquare;
+            sanToken = pieceLetter + targetSquare;
         }
+
+        Board copy = new Board(boardBeforeMove);
+        Piece pieceCopy = copy.getPieceAt(move.from());
+        copy.applyMove(pieceCopy, move.from(), move.to());
+
+        PieceColor sideToMove = copy.isWhiteToMove() ? PieceColor.WHITE : PieceColor.BLACK;
+
+        if (copy.isCheckmate(sideToMove)) {
+            sanToken = sanToken + "#";
+        } else if (copy.isInCheck(sideToMove)) {
+            sanToken = sanToken + "+";
+        }
+
+        return sanToken;
     }
 
     private boolean isKingsideCastlingMove(Move move) {

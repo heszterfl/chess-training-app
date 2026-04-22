@@ -3,6 +3,9 @@ package hu.eszter.chess.pgn;
 import hu.eszter.chess.domain.*;
 import hu.eszter.chess.util.SquareNotation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SanMoveGenerator {
 
     public String toSan(Board boardBeforeMove, Move move) {
@@ -11,23 +14,14 @@ public class SanMoveGenerator {
         String pieceLetter = getPieceLetter(move.piece());
         String targetSquare = getTargetSquare(move.to());
 
+        String disambiguation = getDisambiguation(boardBeforeMove, move);
+
         if (isKingsideCastlingMove(move)) {
             sanToken = "O-O";
         } else if (isQueensideCastlingMove(move)) {
             sanToken = "O-O-O";
         } else if (move.piece() instanceof Pawn) {
-
-            String sourceFile = switch (move.from().col()) {
-                case 0 -> "a";
-                case 1 -> "b";
-                case 2 -> "c";
-                case 3 -> "d";
-                case 4 -> "e";
-                case 5 -> "f";
-                case 6 -> "g";
-                case 7 -> "h";
-                default -> throw new IllegalArgumentException();
-            };
+            String sourceFile = toFileLetter(move.from().col());
 
             targetSquare = getTargetSquare(move.to());
 
@@ -41,9 +35,9 @@ public class SanMoveGenerator {
                 sanToken = sanToken + "=Q";
             }
         } else if (isCaptureMove(boardBeforeMove, move)) {
-            sanToken = pieceLetter + "x" + targetSquare;
+            sanToken = pieceLetter + disambiguation + "x" + targetSquare;
         } else {
-            sanToken = pieceLetter + targetSquare;
+            sanToken = pieceLetter + disambiguation + targetSquare;
         }
 
         Board copy = new Board(boardBeforeMove);
@@ -148,5 +142,67 @@ public class SanMoveGenerator {
     private String getTargetSquare(Position to) {
 
         return SquareNotation.toSquare(to);
+    }
+
+    private String getDisambiguation(Board boardBeforeMove, Move move) {
+
+        Piece thisPiece = move.piece();
+        Piece[][] b = boardBeforeMove.getBoard();
+        List<Piece> rivals = new ArrayList<>();
+
+        if (thisPiece instanceof Pawn || thisPiece instanceof King) {
+            return "";
+        }
+
+        for (int i = 0; i < b.length; i++) {
+            for (int j = 0; j < b[0].length; j++) {
+
+                Piece otherPiece = b[i][j];
+
+                if (otherPiece == null) {
+                    continue;
+                }
+
+                if (thisPiece.getPieceKind() == otherPiece.getPieceKind() &&
+                    thisPiece.getColor() == otherPiece.getColor() &&
+                    !(otherPiece.getCurrentPosition().equals(move.from())) &&
+                        boardBeforeMove.getIsLegalMove(otherPiece.getCurrentPosition(), move.to())) {
+                    rivals.add(otherPiece);
+                }
+            }
+        }
+
+        if (rivals.isEmpty()) {
+            return "";
+        }
+
+        boolean sameFileExists = false;
+
+        for (Piece rival : rivals) {
+            if (rival.getCurrentPosition().col() == move.from().col()) {
+                sameFileExists = true;
+                break;
+            }
+        }
+
+        if (sameFileExists) {
+            return Integer.toString(8 - move.from().row());
+        }
+
+        return toFileLetter(move.from().col());
+    }
+
+    private String toFileLetter(int col) {
+        return  switch (col) {
+            case 0 -> "a";
+            case 1 -> "b";
+            case 2 -> "c";
+            case 3 -> "d";
+            case 4 -> "e";
+            case 5 -> "f";
+            case 6 -> "g";
+            case 7 -> "h";
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

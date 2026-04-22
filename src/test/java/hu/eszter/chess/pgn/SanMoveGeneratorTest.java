@@ -237,4 +237,76 @@ public class SanMoveGeneratorTest {
 
         assertEquals("a8=Q#", sanToken);
     }
+
+    @Test
+    void toSan_generates_file_disambiguated_move() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Knight knight1 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight1, new Position(7, 1));
+
+        Knight knight2 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight2, new Position(5, 5));
+
+        Move move = new Move(knight1, PieceColor.WHITE, new Position(7, 1), new Position(6, 3));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("Nbd2", sanToken);
+    }
+
+    @Test
+    void toSan_generates_rank_disambiguated_move() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Knight knight1 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight1, new Position(7, 5));
+
+        Knight knight2 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight2, new Position(5, 5));
+
+        Move move = new Move(knight1, PieceColor.WHITE, new Position(7, 5), new Position(6, 3));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("N1d2", sanToken);
+    }
+
+    @Test
+    void toSan_generates_file_disambiguated_capture() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Rook rook1 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook1, new Position(6, 0));
+
+        Rook rook2 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook2, new Position(6, 7));
+
+        Bishop bishop = new Bishop(PieceColor.BLACK);
+        TestBoard.place(b, bishop, new Position(6,2));
+
+        Move move = new Move(rook1, PieceColor.WHITE, new Position(6, 0), new Position(6, 2));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("Raxc2", sanToken);
+    }
+
+    @Test
+    void toSan_generates_normal_move_if_no_disambiguation_exists() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Knight knight = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight, new Position(7, 6));
+
+        Move move = new Move(knight, PieceColor.WHITE, new Position(7, 6), new Position(5, 5));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("Nf3", sanToken);
+    }
 }

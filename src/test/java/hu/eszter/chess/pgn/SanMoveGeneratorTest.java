@@ -158,6 +158,48 @@ public class SanMoveGeneratorTest {
     }
 
     @Test
+    void toSan_generates_simple_promotion_with_check() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn pawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, pawn, new Position(1,0));
+
+        Move move = new Move(pawn, PieceColor.WHITE, new Position(1, 0), new Position(0, 0));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("a8=Q+", sanToken);
+    }
+
+    @Test
+    void toSan_generates_capture_promotion_with_checkmate() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn, new Position(1,0));
+
+        Pawn blackPawn1 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn1, new Position(1,3));
+
+        Pawn blackPawn2 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn2, new Position(1,4));
+
+        Pawn blackPawn3 = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn3, new Position(1,5));
+
+        Rook rook = new Rook(PieceColor.BLACK);
+        TestBoard.place(b, rook, new Position(0, 1));
+
+        Move move = new Move(whitePawn, PieceColor.WHITE, new Position(1, 0), new Position(0, 1));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("axb8=Q#", sanToken);
+    }
+
+    @Test
     void toSan_generates_capture_promotion() {
         Board b = TestBoard.empty();
         TestBoard.placeKings(b, new Position(7, 4), new Position(1, 4));
@@ -328,5 +370,44 @@ public class SanMoveGeneratorTest {
         String sanToken = generator.toSan(b, move);
 
         assertEquals("Nf3", sanToken);
+    }
+
+    @Test
+    void toSan_generates_disambiguated_move_with_check() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(4, 4));
+
+        Knight knight1 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight1, new Position(7, 1));
+
+        Knight knight2 = new Knight(PieceColor.WHITE);
+        TestBoard.place(b, knight2, new Position(7, 5));
+
+        Move move = new Move(knight1, PieceColor.WHITE, new Position(7, 1), new Position(6, 3));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("Nbd2+", sanToken);
+    }
+
+    @Test
+    void toSan_generates_disambiguated_capture_with_check() {
+        Board b = TestBoard.empty();
+        TestBoard.placeKings(b, new Position(7, 4), new Position(0, 2));
+
+        Rook rook1 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook1, new Position(6, 0));
+
+        Rook rook2 = new Rook(PieceColor.WHITE);
+        TestBoard.place(b, rook2, new Position(6, 7));
+
+        Bishop bishop = new Bishop(PieceColor.BLACK);
+        TestBoard.place(b, bishop, new Position(6,2));
+
+        Move move = new Move(rook1, PieceColor.WHITE, new Position(6, 0), new Position(6, 2));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("Raxc2+", sanToken);
     }
 }

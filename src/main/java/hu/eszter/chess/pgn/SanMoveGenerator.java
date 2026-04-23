@@ -11,10 +11,7 @@ public class SanMoveGenerator {
     public String toSan(Board boardBeforeMove, Move move) {
 
         String sanToken = "";
-        String pieceLetter = getPieceLetter(move.piece());
         String targetSquare = getTargetSquare(move.to());
-
-        String disambiguation = getDisambiguation(boardBeforeMove, move);
 
         if (isKingsideCastlingMove(move)) {
             sanToken = "O-O";
@@ -34,10 +31,15 @@ public class SanMoveGenerator {
             if (isPromotionMove(move)) {
                 sanToken = sanToken + "=Q";
             }
-        } else if (isCaptureMove(boardBeforeMove, move)) {
-            sanToken = pieceLetter + disambiguation + "x" + targetSquare;
         } else {
-            sanToken = pieceLetter + disambiguation + targetSquare;
+            String pieceLetter = getPieceLetter(move.piece());
+            String disambiguation = getDisambiguation(boardBeforeMove, move);
+
+            if (isCaptureMove(boardBeforeMove, move)) {
+                sanToken = pieceLetter + disambiguation + "x" + targetSquare;
+            } else {
+                sanToken = pieceLetter + disambiguation + targetSquare;
+            }
         }
 
         Board copy = new Board(boardBeforeMove);

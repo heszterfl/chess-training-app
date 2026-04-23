@@ -2,7 +2,7 @@ package hu.eszter.chess.ui;
 
 import hu.eszter.chess.app.GamePersistenceService;
 import hu.eszter.chess.domain.*;
-import hu.eszter.chess.util.SquareNotation;
+import hu.eszter.chess.pgn.SanMoveGenerator;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -13,6 +13,7 @@ import java.util.List;
 
 public class GameViewerWindow extends JFrame {
     private final GamePersistenceService gamePersistenceService;
+    private final SanMoveGenerator sanMoveGenerator;
     private final List<Move> moves;
     private int currentMoveIndex;
     private final ReplayBoardPanel replayBoardPanel;
@@ -24,7 +25,7 @@ public class GameViewerWindow extends JFrame {
     public GameViewerWindow(Game game) throws SQLException {
         this.gamePersistenceService = new GamePersistenceService();
         this.replayBoardPanel = new ReplayBoardPanel();
-
+        this.sanMoveGenerator = new SanMoveGenerator();
 
         setTitle("Game Viewer - " + game.getId());
         setSize(800, 500);
@@ -112,21 +113,27 @@ public class GameViewerWindow extends JFrame {
 
     private List<MoveRow> movesToRows(List<Move> moves) {
         List<MoveRow> moveRows = new ArrayList<>();
+        Board board = new Board();
 
         for (int i = 0; i < moves.size(); i += 2) {
             int moveNumber = i / 2 + 1;
-            Move whiteMove = moves.get(i);
-            Move blackMove = (i+1 >= moves.size()) ? null : moves.get(i+1);
 
-            String white = SquareNotation.toSquare(whiteMove.from()) + " - " + SquareNotation.toSquare(whiteMove.to());
-            String black;
+            Move whiteMove = moves.get(i);
+            String whiteSan = sanMoveGenerator.toSan(board, whiteMove);
+            Piece piece = board.getPieceAt(whiteMove.from());
+            board.applyMove(piece, whiteMove.from(), whiteMove.to());
+
+            Move blackMove = (i+1 >= moves.size()) ? null : moves.get(i+1);
+            String blackSan;
             if (blackMove == null) {
-                black = "";
+                blackSan = "";
             } else {
-                black = SquareNotation.toSquare(blackMove.from()) + " - " + SquareNotation.toSquare(blackMove.to());
+                blackSan = sanMoveGenerator.toSan(board, blackMove);
+                piece = board.getPieceAt(blackMove.from());
+                board.applyMove(piece, blackMove.from(), blackMove.to());
             }
 
-            MoveRow moveRow = new MoveRow(moveNumber, white, black);
+            MoveRow moveRow = new MoveRow(moveNumber, whiteSan, blackSan);
             moveRows.add(moveRow);
         }
 

@@ -2,6 +2,7 @@ package hu.eszter.chess.ui;
 
 import hu.eszter.chess.domain.Board;
 import hu.eszter.chess.domain.Piece;
+import hu.eszter.chess.domain.PieceColor;
 import hu.eszter.chess.domain.Position;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ public class ReplayBoardPanel extends JPanel {
 
     private final Color lightColor = new Color(240, 217, 181);
     private final Color darkColor = new Color(181, 136, 99);
+    private final Color checkColor = new Color(229, 65, 65);
 
     public ReplayBoardPanel() {
         setLayout(new GridLayout(8, 8));
@@ -68,7 +70,27 @@ public class ReplayBoardPanel extends JPanel {
                 } else {
                     button.setText(shortenPieceString(piece.toString()));
                 }
+
+                if ((row + col) % 2 == 0) {
+                    button.setBackground(lightColor);
+                } else {
+                    button.setBackground(darkColor);
+                }
             }
+        }
+
+        if (board.isInCheck(PieceColor.WHITE)) {
+            Position kingPos = board.getKingPosition(PieceColor.WHITE);
+            int row = kingPos.row();
+            int col = kingPos.col();
+            buttons[row][col].setBackground(checkColor);
+        }
+
+        if (board.isInCheck(PieceColor.BLACK)) {
+            Position kingPos = board.getKingPosition(PieceColor.BLACK);
+            int row = kingPos.row();
+            int col = kingPos.col();
+            buttons[row][col].setBackground(checkColor);
         }
 
         repaint();

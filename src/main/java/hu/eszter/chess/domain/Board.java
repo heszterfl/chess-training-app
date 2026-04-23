@@ -639,7 +639,7 @@ public class Board {
                 ((piece.getColor() == WHITE && to.row() == 0) || (piece.getColor() == BLACK && to.row() == 7));
     }
 
-    private Position getKingPosition(PieceColor color) {
+    private Position getCachedKingPosition(PieceColor color) {
 
         return color == WHITE ? whiteKingPosition : blackKingPosition;
     }
@@ -858,7 +858,7 @@ public class Board {
     }
 
     private boolean isKingInCheck(PieceColor color) {
-        Position kingPos = getKingPosition(color);
+        Position kingPos = getCachedKingPosition(color);
         PieceColor opponent = (color == WHITE ? BLACK : WHITE);
         return isSquareAttacked(kingPos, opponent);
     }
@@ -1112,5 +1112,9 @@ public class Board {
         }
 
         return isEnPassantMove(move.piece(), move.from(), move.to());
+    }
+
+    public Position getKingPosition(PieceColor color) {
+        return getCachedKingPosition(color);
     }
 }

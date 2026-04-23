@@ -122,8 +122,10 @@ public class SanMoveGenerator {
 
     private boolean isCaptureMove(Board boardBeforeMove, Move move) {
 
-        Piece target = boardBeforeMove.getPieceAt(move.to());
-        return target != null;
+        if (boardBeforeMove.getPieceAt(move.to()) != null) {
+            return true;
+        }
+        return boardBeforeMove.isEnPassant(move);
     }
 
     private String getPieceLetter(Piece piece) {

@@ -83,6 +83,26 @@ public class SanMoveGeneratorTest {
     }
 
     @Test
+    void toSan_generates_en_passant_move() {
+        Board b = TestBoard.empty();
+        TestBoard.placeDefaultKings(b);
+
+        Pawn whitePawn = new Pawn(PieceColor.WHITE);
+        TestBoard.place(b, whitePawn, new Position(6, 1));
+
+        Pawn blackPawn = new Pawn(PieceColor.BLACK);
+        TestBoard.place(b, blackPawn, new Position(4, 0));
+
+        b.tryMove(new Position(6, 1), new Position(4, 1));
+
+        Move move = new Move(blackPawn, PieceColor.BLACK, new Position(4, 0), new Position(5, 1));
+
+        String sanToken = generator.toSan(b, move);
+
+        assertEquals("axb3", sanToken);
+    }
+
+    @Test
     void toSan_generates_kingside_castling() {
         Board b = TestBoard.empty();
 

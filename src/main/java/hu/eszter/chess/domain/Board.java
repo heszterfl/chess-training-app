@@ -1105,4 +1105,12 @@ public class Board {
     public boolean isCheckmate(PieceColor color) {
         return isCheckmated(color);
     }
+
+    public boolean isEnPassant(Move move) {
+        if (move == null) {
+            return false;
+        }
+
+        return isEnPassantMove(move.piece(), move.from(), move.to());
+    }
 }
